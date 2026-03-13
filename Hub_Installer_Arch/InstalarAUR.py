@@ -1,15 +1,18 @@
 import subprocess
 
 def InstalarAUR():
-     print("Começando instalação do yay AUR")
-     print("Instalando dependencias")
-     subprocess.run("sudo pacman -S --needed base-devel git", shell=True)
-     print("Clonando repositório\n")
-     subprocess.run("git clone https://aur.archlinux.org/yay.git", shell=True)
-     print("Entrando na pasta yay\n")
-     subprocess.run("cd yay", shell=True)
-     print("Rodando o inicializando a instalação\n")
-     subprocess.run("cd yay && makepkg -si", shell=True)
-     print("Limpando cache\n")
-     subprocess.run("sudo rm -R yay", shell=True)
-     print("AUR yay isntalado com sucesso!\n")
+     confirmation = input("\n\n# Você tem certeza que deseja instalar o AUR yay? #\n\n (S/N): ")
+
+     if confirmation.lower() == "s":
+          print("\n\n# Começando instalação do yay AUR #\n\n")
+          print("\n\n# Instalando dependencias #\n\n")
+          subprocess.run("sudo pacman -S --needed base-devel git", shell=True)
+          print("\n\n# Clonando repositório #\n\n")
+          subprocess.run("git clone https://aur.archlinux.org/yay.git", shell=True)
+          print("\n\n# Entrando na pasta yay #\n\n")
+          subprocess.run("cd yay", shell=True)
+          print("\n\n# Rodando o inicializando a instalação #\n\n")
+          subprocess.run("cd yay && makepkg -si", shell=True)
+          print("\n\n# Limpando cache #\n\n")
+          subprocess.run("sudo rm -R yay", shell=True)
+          print("\n\n# AUR yay isntalado com sucesso! #\n\n")

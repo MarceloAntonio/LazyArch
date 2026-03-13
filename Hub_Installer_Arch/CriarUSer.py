@@ -1,16 +1,37 @@
 import os
 import subprocess
+
+
+
+
+def senha(name):
+        print(f"\nCriei uma senha para {name}\n")
+        subprocess.run(["passwd",name])
+
 def CriarUser():
+                
                 name = input("Coloque seu nome\n:");
-                subprocess.run(["doas","useradd", "-m", "-G", "users,wheel", "-s", "/bin/bash", name])
+                resultado = subprocess.run(["sudo","useradd", "-m", "-G", "wheel", "-s", "/bin/bash", name])
+                
+                match resultado.returncode:
+                        case 0: 
+                                senha(name)
+                                entrar = input("Deseja entrar no usuario? (S/N)")
+                                if entrar.lower() == "s":
+                                    print("Entrando no usuario")
+                                    print(name)
+                                    os.execlp("su", "su", "-", name)
 
-                print(f"\nCriei uma senha para {name}\n")
-                subprocess.run(["passwd",name])
+                        case 9: 
+                                print(f"Erro: o usuario {name} já existe")
+                        case 3: 
+                                print(f"Erro: nome invalido")
 
-                print("usuario criado")
+                        case _:
+                                print(f"Erro desconhecido!")
 
-                entrar = input("Deseja entrar no usuario? (S/N)")
-                if entrar.lower() == "s":
-                    print("Entrando no usuario")
-                    print(name)
-                    os.execlp("su", "su", "-", name)
+
+               
+
+                    
+              
