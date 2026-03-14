@@ -6,9 +6,9 @@ import subprocess
 
 def senha(name):
         print(f"\nCriei uma senha para {name}\n")
-        subprocess.run(["passwd",name])
+        subprocess.run(["sudo", "passwd",name])
 
-def CriarUser():
+def AddUser():
                 
                 name = input("Coloque seu nome\n:");
                 resultado = subprocess.run(["sudo","useradd", "-m", "-G", "wheel", "-s", "/bin/bash", name])

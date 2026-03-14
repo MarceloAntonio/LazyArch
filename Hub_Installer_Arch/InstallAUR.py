@@ -1,6 +1,6 @@
 import subprocess
 
-def InstalarAUR():
+def InstallAUR():
      confirmation = input("\n\n# Você tem certeza que deseja instalar o AUR yay? #\n\n (S/N): ")
 
      if confirmation.lower() == "s":

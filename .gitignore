@@ -1,4 +1,5 @@
 docker-compose.yml
 Dockerfile
-data/
 .dockerignore
+data/
+__pycache__

@@ -1,6 +1,6 @@
 import subprocess
 
-def InstalarNeoVimPlus():
+def InstallLazyVim():
      
      confirmation = input("Você tem certeza que deseja instalar o Lazy vim? (S/N)")
 
