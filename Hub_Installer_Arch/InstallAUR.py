@@ -6,7 +6,7 @@ def InstallAUR():
      if confirmation.lower() == "s":
           print("\n\n# Começando instalação do yay AUR #\n\n")
           print("\n\n# Instalando dependencias #\n\n")
-          subprocess.run("sudo pacman -S --needed base-devel git", shell=True)
+          subprocess.run("sudo pacman -S --noconfirm --needed base-devel git", shell=True)
           print("\n\n# Clonando repositório #\n\n")
           subprocess.run("git clone https://aur.archlinux.org/yay.git", shell=True)
           print("\n\n# Entrando na pasta yay #\n\n")

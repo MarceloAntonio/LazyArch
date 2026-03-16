@@ -6,7 +6,7 @@ def InstallLazyVim():
 
      if confirmation.lower() == "s":
           print("\n\n# Instalando dependencias #\n\n")
-          subprocess.run("sudo pacman -S --needed nvim git ", shell=True)
+          subprocess.run("sudo pacman -S --noconfirm --needed nvim git ", shell=True)
           print("\n\n# Clonando repositório #\n\n")
           subprocess.run("git clone https://github.com/LazyVim/starter ~/.config/nvim", shell=True)
           print("\n\n# Limpando cache #\n\n")
