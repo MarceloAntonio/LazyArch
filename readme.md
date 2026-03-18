@@ -5,18 +5,17 @@
 git clone https://github.com/MarceloAntonio/Hub-Installer-Arch
 
 ```
-
-
 2. **Acesse a pasta do projeto:**
 ```bash
 cd Hub-Installer-Arch
-
 ```
-
-
-3. **Execute o main:**
+3. **Instalar dependências:**
 ```bash
-python3 main.py
-
+pip install -r requirements.txt
+```
+4. **Execute o main:**
+```bash
+python main.py
+```
 
 

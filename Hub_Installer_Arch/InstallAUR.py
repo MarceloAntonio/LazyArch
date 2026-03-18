@@ -1,7 +1,8 @@
 import subprocess
+from InquirerPy import inquirer
 
 def InstallAUR():
-     confirmation = input("\n\n# Você tem certeza que deseja instalar o AUR yay? #\n\n (S/N): ")
+     confirmation = inquirer.text(message="\n\n# Você tem certeza que deseja instalar o AUR yay? #\n\n (S/N):").execute()
 
      if confirmation.lower() == "s":
           print("\n\n# Começando instalação do yay AUR #\n\n")
@@ -16,3 +17,6 @@ def InstallAUR():
           print("\n\n# Limpando cache #\n\n")
           subprocess.run("sudo rm -R yay", shell=True)
           print("\n\n# AUR yay isntalado com sucesso! #\n\n")
+
+     else:
+          print("\nRetornando pro Hub\n")

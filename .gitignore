@@ -3,3 +3,4 @@ Dockerfile
 .dockerignore
 data/
 __pycache__
+test.py

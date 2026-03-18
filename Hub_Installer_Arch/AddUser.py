@@ -1,7 +1,5 @@
-import os
 import subprocess
-
-
+from InquirerPy import inquirer
 
 
 def senha(name):
@@ -10,17 +8,13 @@ def senha(name):
 
 def AddUser():
                 
-                name = input("Coloque seu nome\n:");
+                name = inquirer.text(message="Coloque seu nome").execute()
+                
                 resultado = subprocess.run(["sudo","useradd", "-m", "-G", "wheel", "-s", "/bin/bash", name])
                 
                 match resultado.returncode:
                         case 0: 
                                 senha(name)
-                                entrar = input("Deseja entrar no usuario? (S/N)")
-                                if entrar.lower() == "s":
-                                    print("Entrando no usuario")
-                                    print(name)
-                                    os.execlp("su", "su", "-", name)
 
                         case 9: 
                                 print(f"Erro: o usuario {name} já existe")
