@@ -11,11 +11,11 @@ cd Hub-Installer-Arch
 ```
 3. **Instalar dependências:**
 ```bash
-pip install -r requirements.txt
+sudo chmod +x Install.sh
 ```
 4. **Execute o main:**
 ```bash
-python main.py
+./hub_arch
 ```
 
 
