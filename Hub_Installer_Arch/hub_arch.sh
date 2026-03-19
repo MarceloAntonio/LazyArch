@@ -12,8 +12,7 @@ checar_pip() {
 
 
 checar_python() {
-    local pacote=$1
-    if pacman -Qi "$pacote" &> /dev/null; then
+    if pacman -Qi python &> /dev/null; then
         echo ""
     else
         echo "Python não instalado"
@@ -25,7 +24,7 @@ checar_python() {
 checar_python
 checar_pip
 
-pip install -r requirements.txt --break-system-packages
+sudo pip install -r requirements.txt --break-system-packages
 python main.py
 
 

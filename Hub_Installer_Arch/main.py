@@ -1,4 +1,4 @@
-from Hub_Installer_Arch import Hub, VerificarPrivilegio, EncerrarPrograma
+from Hub_Installer_Arch import Hub, VerificarPrivilegio, EncerrarPrograma, clean
 
 
 
@@ -13,5 +13,6 @@ def Main():
           Hub.Hub()
 
 if __name__ == "__main__":
+    clean.clean()
     Main()
 
