@@ -5,30 +5,32 @@ from InquirerPy import inquirer
 
 def ChangeShell():
      shell = os.environ.get('SHELL')
-     print(f"Shell padrão: {shell}") 
+     print(f"Default shell: {shell}") 
  
      shellAlterar = inquirer.select(
-     message="Selecione uma opção:",
-     choices=["Bash","Zsh", "Fish", "Voltar"],
+     message="Select an option:",
+     choices=["Bash","Zsh", "Fish", "Back"],
      ).execute()
      match shellAlterar:
                case "Bash":
-                    print("Instalando bash")
+                    print("Installing bash")
                     subprocess.run("sudo pacman -S --noconfirm --needed bash", shell=True)
-                    print("Trocando para o bash")
+                    print("Switching to bash")
                     subprocess.run("chsh -s /bin/bash", shell=True)
 
 
                case "Zsh":
                     subprocess.run("sudo pacman -S --noconfirm --needed zsh zsh-completions", shell=True)
-                    print("Definindo Zsh como shell padrão:")
+                    print("Setting Zsh as default shell:")
                     subprocess.run("chsh -s /usr/bin/zsh", shell=True)
                
                     
                case "Fish":
                     subprocess.run("sudo pacman -S --noconfirm --needed fish", shell=True)
-                    print("Trocando para Fish")
+                    print("Switching to Fish")
                     subprocess.run("chsh -s /usr/bin/fish", shell=True)
-                    print("Shell trocado com sucesso reiniciei ou relogue no usuário")
+                    print("Shell changed successfully; restart or log back into your user")
+               case "Back":
+                    return
                case _:
-                    print("Opção desconhecida")
+                    print("Unknown option")

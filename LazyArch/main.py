@@ -1,4 +1,4 @@
-from Hub_Installer_Arch import Hub, VerificarPrivilegio, EncerrarPrograma, clean
+from LazyArch import Hub, VerificarPrivilegio, EncerrarPrograma, clean
 
 
 

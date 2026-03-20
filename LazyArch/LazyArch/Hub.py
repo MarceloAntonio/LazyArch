@@ -5,26 +5,26 @@ from InquirerPy import inquirer
 def Hub():
       while(True):
             hubChoice = inquirer.select(
-                  message="Selecione uma opção:",
-                  choices=["Instalar AUR", "Instalar & trocar shell (BETA)", "Instalar LazyVim","Criar User","Sair"],
+                  message="Select an option:",
+                  choices=["Install AUR", "Install & change shell", "Install LazyVim","Create User","Exit"],
             ).execute()
             match hubChoice:
-                        case "Instalar AUR":
+                        case "Install AUR":
                               clean.clean()
                               InstallAUR.InstallAUR()
-                        case "Instalar & trocar shell (BETA)":
+                        case "Install & change shell":
                               clean.clean()
                               ChangeShell.ChangeShell()
-                        case "Instalar LazyVim":
+                        case "Install LazyVim":
                               clean.clean()
                               InstallLazyVim.InstallLazyVim()
-                        case "Criar User":
+                        case "Create User":
                               clean.clean()
                               AddUser.AddUser()
 
-                        case "Sair":
+                        case "Exit":
                               clean.clean()
-                              EncerrarPrograma.EncerrarPrograma("Encerrando")
+                              EncerrarPrograma.EncerrarPrograma("Closing")
 
                         case _:
-                              print("Escolha desconhecida")
+                              print("Unknown choice")

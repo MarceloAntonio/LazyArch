@@ -3,12 +3,12 @@ from InquirerPy import inquirer
 
 
 def senha(name):
-        print(f"\nCriei uma senha para {name}\n")
+        print(f"\nCreate a password for {name}\n")
         subprocess.run(["sudo", "passwd",name])
 
 def AddUser():
                 
-                name = inquirer.text(message="Coloque seu nome").execute()
+                name = inquirer.text(message="Enter your name").execute()
                 
                 resultado = subprocess.run(["sudo","useradd", "-m", "-G", "wheel", "-s", "/bin/bash", name])
                 
@@ -17,15 +17,9 @@ def AddUser():
                                 senha(name)
 
                         case 9: 
-                                print(f"Erro: o usuario {name} já existe")
+                                print(f"Error: user {name} already exists")
                         case 3: 
-                                print(f"Erro: nome invalido")
+                                print(f"Error: invalid name")
 
                         case _:
-                                print(f"Erro desconhecido!")
-
-
-               
-
-                    
-              
+                                print(f"Unknown error!")

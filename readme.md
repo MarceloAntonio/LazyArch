@@ -1,21 +1,25 @@
-# Hub Installer Arch 
+# LazyArch 
 
-1. **Clone o repositório:**
+1. **Clone the repository:**
 ```bash
-git clone https://github.com/MarceloAntonio/Hub-Installer-Arch
+git clone https://github.com/MarceloAntonio/LazyArch
 
 ```
-2. **Acesse a pasta do projeto:**
+2. **Access the project folder:**
 ```bash
-cd Hub-Installer-Arch
+cd LazyArch
 ```
-3. **Instalar dependências:**
+3. **Make the installer executable.**
 ```bash
 sudo chmod +x Install.sh
 ```
-4. **Execute o main:**
+4. **Run the installer:**
 ```bash
-./hub_arch
+./Install.sh
+```
+5. **Run LazyArch anywhere:**
+```bash
+LazyArch
 ```
 
 

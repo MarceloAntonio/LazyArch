@@ -1,51 +1,52 @@
 #!/bin/bash
 
 
-script="./Hub_Installer_Arch/hub_arch.sh"
-dependencies="./Hub_Installer_Arch/requirements.txt"
+script="./LazyArch/LazyArch.sh"
+dependencies="./LazyArch/requirements.txt"
 
 
 if [ ! -f "$script" ]; then
-    echo "Erro: Arquivo $script não encontrado"
+    echo "Error: File $script not found"
     exit 1
 fi
 
-
+echo "Installing dependencies"
 sudo chmod +x "$script"
 
 checar_pip() {
-    # Verifica se o executável 'pip' existe no sistema
     if ! command -v pip &> /dev/null; then
-        echo "Pip não encontrado. Instalando..."
+        echo "Pip not found. Installing..."
         sudo pacman -S python-pip --noconfirm --needed
     else
-        echo ""
+        echo "Python is already installed"
     fi
 }
 
 
 checar_python() {
     if pacman -Qi python &> /dev/null; then
-        echo ""
+        echo "Python is already installed"
     else
-        echo "Python não instalado"
-        echo "instalando Python"
+        echo "Python not found. Installing..."
+        
         sudo pacman -S python --noconfirm --needed
     fi
 }
 
 checar_python
+
 checar_pip
 
-pip install -r "$dependencies" --break-system-packages
+
+echo "Installing dependencies"
+#Uncomment (#--break-system-packages) in case of error using Docker.
+pip install -r "$dependencies" #--break-system-packages
 
 
-sudo mkdir -p /usr/local/bin/hub_arch_files
+sudo mkdir -p /usr/local/bin/LazyArch_files
 
+sudo cp -r "./LazyArch/." /usr/local/bin/LazyArch_files/
 
-sudo cp -r "./Hub_Installer_Arch/." /usr/local/bin/hub_arch_files/
+sudo ln -sf /usr/local/bin/LazyArch_files/LazyArch.sh /usr/local/bin/LazyArch
 
-
-sudo ln -sf /usr/local/bin/hub_arch_files/hub_arch.sh /usr/local/bin/hub_arch
-
-echo "Pronto! Agora é só digitar hub_arch em qualquer terminal."
+echo "Done! Now just type LazyArch in any terminal."
