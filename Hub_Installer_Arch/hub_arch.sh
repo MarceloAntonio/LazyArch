@@ -1,8 +1,8 @@
 #!/bin/bash
 
+SCRIPT_DIR="/usr/local/bin/hub_arch_files"
 
-
-sudo pip install -r requirements.txt --break-system-packages
-python main.py
+# Executa o python dentro da pasta correta
+python "$SCRIPT_DIR/main.py"
 
 

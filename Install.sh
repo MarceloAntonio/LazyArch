@@ -37,7 +37,7 @@ checar_python() {
 checar_python
 checar_pip
 
-
+pip install -r "$dependencies" --break-system-packages
 
 
 sudo mkdir -p /usr/local/bin/hub_arch_files
