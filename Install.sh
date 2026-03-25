@@ -39,9 +39,13 @@ checar_pip
 
 
 echo "Installing dependencies"
-#Uncomment (#--break-system-packages) in case of error using Docker.
-pip install -r "$dependencies" #--break-system-packages
 
+
+if [ -f /.dockerenv ]; then
+    pip install -r "$dependencies" --break-system-packages
+else
+    pip install -r "$dependencies"
+fi
 
 sudo mkdir -p /usr/local/bin/LazyArch_files
 
