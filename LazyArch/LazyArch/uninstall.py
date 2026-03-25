@@ -2,8 +2,8 @@ import os
 import sys
 import subprocess
 from InquirerPy import inquirer
-from exit_program import exit_program
-from cleanup import cleanup
+from . import cleanup
+from . import exit_program
 
 
 
@@ -24,8 +24,8 @@ def uninstall():
                     ["sudo", "rm", "-rf", lazyarch_dir, lazyarch_exec],
                     check=True
                 )
-                cleanup()
-                exit_program("LazyArch has been successfully removed.")
+                cleanup.cleanup()
+                exit_program.exit_program("LazyArch has been successfully removed.")
 
             except subprocess.CalledProcessError as e:
                 print("An error occurred during uninstallation.")
