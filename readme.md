@@ -36,7 +36,7 @@ The project follows the **KISS (Keep It Simple, Stupid)** philosophy, aiming for
 ### Option 1: Quick install (recommended)
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/MarceloAntonio/LazyArch/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/MarceloAntonio/LazyArch/refs/heads/main/Install.sh | bash
 ````
 
 ---

@@ -8,7 +8,13 @@ def more_options():
             ).execute()
        match more_options_choice:
               case "Uninstall":
+                     cleanup.cleanup()
                      uninstall.uninstall()
+              case "Back":
+                     cleanup.cleanup()
+                     return
+              case _:
+                     print("Unknown choice")
               
 def main_menu():
       while(True):
@@ -28,8 +34,9 @@ def main_menu():
                               install_lazyvim.install_lazyvim()
                         case "Add user":
                               cleanup.cleanup()
-                              add_user.AddUser()
+                              add_user.add_user()
                         case "More":
+                              cleanup.cleanup()
                               more_options()
                         case "Exit":
                               cleanup.cleanup()
