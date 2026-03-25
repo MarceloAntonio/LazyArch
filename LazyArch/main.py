@@ -1,18 +1,12 @@
-from LazyArch import Hub, VerificarPrivilegio, EncerrarPrograma, clean
+from LazyArch import main_menu,cleanup,check_privileges,exit_program
 
-
-
-
-
-
-#Função central que inicia o sistema
-def Main():
-     if VerificarPrivilegio.VerificarPrivilegio() == True:
-          EncerrarPrograma.EncerrarPrograma("Rode o script sem sudo ou root")
+def main():
+     if check_privileges.check_privileges() == True:
+          exit_program.exit_program("Run the script without sudo or root")
      else:
-          Hub.Hub()
+          main_menu.main_menu()
 
 if __name__ == "__main__":
-    clean.clean()
-    Main()
+    cleanup.cleanup()
+    main()
 

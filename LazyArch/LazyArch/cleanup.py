@@ -1,5 +1,5 @@
 import subprocess
 
 
-def clean():
+def cleanup():
     subprocess.run("clear", shell=True)

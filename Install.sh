@@ -1,56 +1,90 @@
 #!/bin/bash
+set -e
 
+REPO_URL="https://github.com/MarceloAntonio/LazyArch.git"
+INSTALL_DIR="/tmp/LazyArch"
 
-script="./LazyArch/LazyArch.sh"
-dependencies="./LazyArch/requirements.txt"
+echo "==> Checking system..."
 
+# Check if already installed
+if [ -f /usr/local/bin/LazyArch ]; then
+    echo "LazyArch is already installed."
+    exit 0
+fi
 
+# Check if Arch Linux
+if [ ! -f /etc/arch-release ]; then
+    echo "LazyArch only supports Arch Linux."
+    exit 1
+fi
+
+# Check if git exists
+if ! command -v git &> /dev/null; then
+    echo "Installing git..."
+    sudo pacman -S git --noconfirm --needed
+fi
+
+echo "==> Cloning LazyArch..."
+git clone "$REPO_URL" "$INSTALL_DIR"
+
+cd "$INSTALL_DIR"
+
+script="LazyArch/LazyArch.sh"
+dependencies="LazyArch/requirements.txt"
+
+# Validate files
 if [ ! -f "$script" ]; then
     echo "Error: File $script not found"
     exit 1
 fi
 
-echo "Installing dependencies"
-sudo chmod +x "$script"
+echo "==> Preparing installation..."
+chmod +x "$script"
 
-checar_pip() {
+# Check Python
+check_python() {
+    if ! command -v python &> /dev/null; then
+        echo "Installing Python..."
+        sudo pacman -S python --noconfirm --needed
+    else
+        echo "Python is already installed"
+    fi
+}
+
+# Check pip
+check_pip() {
     if ! command -v pip &> /dev/null; then
-        echo "Pip not found. Installing..."
+        echo "Installing pip..."
         sudo pacman -S python-pip --noconfirm --needed
     else
-        echo "Python is already installed"
+        echo "pip is already installed"
     fi
 }
 
+check_python
+check_pip
 
-checar_python() {
-    if pacman -Qi python &> /dev/null; then
-        echo "Python is already installed"
-    else
-        echo "Python not found. Installing..."
-        
-        sudo pacman -S python --noconfirm --needed
-    fi
-}
-
-checar_python
-
-checar_pip
-
-
-echo "Installing dependencies"
-
+echo "==> Installing dependencies..."
 
 if [ -f /.dockerenv ]; then
-    pip install -r "$dependencies" --break-system-packages
+    python -m pip install -r "$dependencies" --break-system-packages
 else
-    pip install -r "$dependencies"
+    python -m pip install -r "$dependencies"
 fi
 
-sudo mkdir -p /usr/local/bin/LazyArch_files
+echo "==> Installing LazyArch..."
 
-sudo cp -r "./LazyArch/." /usr/local/bin/LazyArch_files/
+sudo mkdir -p /usr/local/bin/LazyArch_files
+sudo cp -r LazyArch/. /usr/local/bin/LazyArch_files/
 
 sudo ln -sf /usr/local/bin/LazyArch_files/LazyArch.sh /usr/local/bin/LazyArch
 
-echo "Done! Now just type LazyArch in any terminal."
+echo "==> Cleaning up..."
+rm -rf "$INSTALL_DIR"
+
+echo ""
+echo "======================================="
+echo " LazyArch installed successfully!"
+echo "======================================="
+echo "Run: LazyArch"
+echo ""

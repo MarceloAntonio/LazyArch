@@ -14,45 +14,54 @@
 
 ## What is LazyArch?
 
-LazyArch is a program that automates boring or time-consuming installations and configurations.  
-Instead of searching and copying commands multiple times, LazyArch does everything for you — just select an option and it will install what you need along with its dependencies.
+LazyArch is a tool that automates boring or time-consuming installations and configurations.
 
-We follow the **KISS (Keep It Simple, Stupid)** philosophy, so everything is designed to be simple and hassle-free.
+Instead of searching for commands and copying them repeatedly, LazyArch does everything for you. Just select an option, and it installs what you need along with all required dependencies.
+
+The project follows the **KISS (Keep It Simple, Stupid)** philosophy, aiming for simplicity and a hassle-free experience.
 
 ---
-
 
 ## Features
 
 - Install and automatically configure shells (Fish, Zsh, Bash)
 - Install LazyVim
-- Install AUR
+- Install AUR helpers
 - Create users
 
 ---
 
-If you're interested, follow the steps below to install:
+## Installation
 
-## Running on your machine
+### Option 1: Quick install (recommended)
 
-### 1. Clone the repository
 ```bash
-git clone https://github.com/MarceloAntonio/LazyArch
+curl -sSL https://raw.githubusercontent.com/MarceloAntonio/LazyArch/main/install.sh | bash
 ````
 
-### 2. Enter the project folder
+---
+
+### Option 2: Manual installation
+
+#### 1. Clone the repository
+
+```bash
+git clone https://github.com/MarceloAntonio/LazyArch
+```
+
+#### 2. Enter the project folder
 
 ```bash
 cd LazyArch
 ```
 
-### 3. Make the installer executable
+#### 3. Make the installer executable
 
 ```bash
 chmod +x Install.sh
 ```
 
-### 4. Run the installer
+#### 4. Run the installer
 
 ```bash
 ./Install.sh
@@ -60,7 +69,9 @@ chmod +x Install.sh
 
 ---
 
-## Run LazyArch from anywhere
+## Usage
+
+After installation, you can run LazyArch from anywhere:
 
 ```bash
 LazyArch
@@ -70,56 +81,26 @@ LazyArch
 
 ## Running with Docker
 
-If you don’t want to run it directly on your machine, a Docker environment is available so you can test it safely.
-
-### 1. Enter the project folder
+If you don’t want to install anything on your system, you can run LazyArch using Docker:
 
 ```bash
-cd LazyArch
-```
+docker run -it marceloantonio505/lazyarch
+```        
 
-### 2. Start the container
-
-```bash
-docker compose up -d
-```
-
-### 3. Access the container
-
-```bash
-docker exec -it LazyArch /bin/bash
-```
-
-### 4. Run the installer inside the container
-
-Follow the steps from **"Running on your machine"**.
+Then follow the installation steps inside the container.
 
 ---
 
 ## Uninstalling
 
-### 1. Enter the project folder
+Open LazyArch and navigate to:
 
-```bash
-cd LazyArch
-```
-
-### 2. Make the uninstaller executable
-
-```bash
-chmod +x Uninstall.sh
-```
-
-### 3. Run the uninstaller
-
-```bash
-./Uninstall.sh
-```
+More → Uninstall
 
 ---
 
 ## Notes
 
-* Make sure you have Docker and Docker Compose installed if you are using the container method.
-* If a password is required inside the Docker container, use: **1234**.
-
+* LazyArch is designed for **Arch Linux-based systems**
+* Make sure you have **Docker installed** if using the container method
+* Default Docker password (if required): **1234**

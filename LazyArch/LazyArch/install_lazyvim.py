@@ -1,7 +1,7 @@
 import subprocess
 from InquirerPy import inquirer
 
-def InstallLazyVim():
+def install_lazyvim():
 
      confirmation = inquirer.text(message="Are you sure you want to install LazyVim? (Y/N)").execute()
      if confirmation.lower() == "y":
@@ -14,5 +14,5 @@ def InstallLazyVim():
           print("\n\n# Lazy vim installed successfully #\n\n")
 
      else:
-          print("\nReturning to the Hub\n") 
+          print("\nReturning to the menu\n") 
     

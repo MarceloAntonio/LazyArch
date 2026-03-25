@@ -1,7 +1,7 @@
 import subprocess
 from InquirerPy import inquirer
 
-def InstallAUR():
+def install_aur():
      confirmation = inquirer.text(message="\n\nAre you sure you want to install AUR yay? (Y/N): ").execute()
 
      if confirmation.lower() == "y":
@@ -19,4 +19,4 @@ def InstallAUR():
           print("\n\n# AUR yay installed successfully! #\n\n")
 
      else:
-          print("\nReturning to the Hub\n")
+          print("\nReturning to the menu\n")
