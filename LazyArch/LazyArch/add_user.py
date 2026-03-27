@@ -2,7 +2,7 @@ import subprocess
 from InquirerPy import inquirer
 
 
-def password(name):
+def _password(name):
         print(f"\nCreate a password for {name}\n")
         subprocess.run(["sudo", "passwd",name])
 
@@ -14,7 +14,7 @@ def add_user():
                 
                 match result.returncode:
                         case 0: 
-                                password(name)
+                                _password(name)
 
                         case 9: 
                                 print(f"Error: user {name} already exists")

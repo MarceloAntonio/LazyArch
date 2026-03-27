@@ -1,7 +1,7 @@
-from . import add_user, change_shell, cleanup, exit_program, install_aur, install_lazyvim, uninstall
+from . import add_user, change_shell, cleanup, exit_program, install_aur, install_lazyvim, uninstall, git_config
 from InquirerPy import inquirer
 
-def more_options():
+def _more_options():
        more_options_choice = inquirer.select(
                   message="Select an option:",
                   choices=["Uninstall","Back"],
@@ -20,7 +20,7 @@ def main_menu():
       while(True):
             menu_choice = inquirer.select(
                   message="Select an option:",
-                  choices=["Install AUR", "Change shell", "Install LazyVim","Add user","More","Exit"],
+                  choices=["Install AUR", "Change shell", "Install LazyVim","Add user","Git Config","More","Exit"],
             ).execute()
             match menu_choice:
                         case "Install AUR":
@@ -35,9 +35,12 @@ def main_menu():
                         case "Add user":
                               cleanup.cleanup()
                               add_user.add_user()
+                        case "Git Config":
+                              cleanup.cleanup()
+                              git_config.git_config()
                         case "More":
                               cleanup.cleanup()
-                              more_options()
+                              _more_options()
                         case "Exit":
                               cleanup.cleanup()
                               exit_program.exit_program("Closing")
