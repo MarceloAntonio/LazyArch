@@ -28,6 +28,7 @@ The project follows the **KISS (Keep It Simple, Stupid)** philosophy, aiming for
 - Install LazyVim
 - Install AUR helpers
 - Create users
+- Git Config
 
 ---
 
@@ -88,6 +89,14 @@ docker run -it marceloantonio505/lazyarch
 ```        
 
 Then follow the installation steps inside the container.
+
+---
+
+## Updating
+
+Open LazyArch and navigate to:
+
+More → Check Update
 
 ---
 

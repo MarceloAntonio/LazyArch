@@ -1,15 +1,18 @@
-from . import add_user, change_shell, cleanup, exit_program, install_aur, install_lazyvim, uninstall, git_config
+from . import add_user, change_shell, cleanup, exit_program, install_aur, install_lazyvim, uninstall, git_config, check_update
 from InquirerPy import inquirer
 
 def _more_options():
        more_options_choice = inquirer.select(
                   message="Select an option:",
-                  choices=["Uninstall","Back"],
+                  choices=["Uninstall","Check Update","Back"],
             ).execute()
        match more_options_choice:
               case "Uninstall":
                      cleanup.cleanup()
                      uninstall.uninstall()
+              case "Check Update":
+                     cleanup.cleanup()
+                     check_update.check_update()
               case "Back":
                      cleanup.cleanup()
                      return
