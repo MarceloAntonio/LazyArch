@@ -1,86 +1,26 @@
 #!/bin/bash
 set -e
 
-REPO_URL="https://github.com/MarceloAntonio/LazyArch.git"
-INSTALL_DIR="/tmp/LazyArch"
+echo "==> Preparing LazyArch installation..."
 
-echo "==> Checking system..."
+# 1. Garante que o usuário tem as ferramentas nativas de compilação do Arch
+sudo pacman -S --needed --noconfirm git base-devel
 
-# Check if already installed
-if [ -f /usr/local/bin/LazyArch ]; then
-    echo "LazyArch is already installed."
-    exit 0
-fi
+# 2. Cria uma pasta temporária limpa
+BUILD_DIR="/tmp/lazyarch_build"
+rm -rf "$BUILD_DIR"
 
-# Check if Arch Linux
-if [ ! -f /etc/arch-release ]; then
-    echo "LazyArch only supports Arch Linux."
-    exit 1
-fi
+# 3. Baixa o seu repositório (que agora tem o PKGBUILD dentro)
+git clone https://github.com/MarceloAntonio/LazyArch.git "$BUILD_DIR"
 
-# Check if git exists
-if ! command -v git &> /dev/null; then
-    echo "Installing git..."
-    sudo pacman -S git --noconfirm --needed
-fi
+# 4. Entra na pasta e manda o Arch compilar e instalar o pacote silenciosamente
+cd "$BUILD_DIR"
+echo "==> Building and installing package..."
+makepkg -si --noconfirm
 
-echo "==> Cloning LazyArch..."
-git clone "$REPO_URL" "$INSTALL_DIR"
-
-cd "$INSTALL_DIR"
-
-script="LazyArch/LazyArch.sh"
-dependencies="LazyArch/requirements.txt"
-
-# Validate files
-if [ ! -f "$script" ]; then
-    echo "Error: File $script not found"
-    exit 1
-fi
-
-echo "==> Preparing installation..."
-chmod +x "$script"
-
-# Check Python
-check_python() {
-    if ! command -v python &> /dev/null; then
-        echo "Installing Python..."
-        sudo pacman -S python --noconfirm --needed
-    else
-        echo "Python is already installed"
-    fi
-}
-
-# Check pip
-check_pip() {
-    if ! command -v pip &> /dev/null; then
-        echo "Installing pip..."
-        sudo pacman -S python-pip --noconfirm --needed
-    else
-        echo "pip is already installed"
-    fi
-}
-
-check_python
-check_pip
-
-echo "==> Installing dependencies..."
-
-if [ -f /.dockerenv ]; then
-    python -m pip install -r "$dependencies" --break-system-packages
-else
-    python -m pip install -r "$dependencies"
-fi
-
-echo "==> Installing LazyArch..."
-
-sudo mkdir -p /usr/local/bin/LazyArch_files
-sudo cp -a LazyArch/. /usr/local/bin/LazyArch_files/
-
-sudo ln -sf /usr/local/bin/LazyArch_files/LazyArch.sh /usr/local/bin/LazyArch
-
-echo "==> Cleaning up..."
-rm -rf "$INSTALL_DIR"
+# 5. Limpa a sujeira
+cd ~
+rm -rf "$BUILD_DIR"
 
 echo ""
 echo "======================================="
