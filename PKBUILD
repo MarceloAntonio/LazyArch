@@ -1,0 +1,36 @@
+# Maintainer: Marcelo Antonio <seu-email@aqui.com>
+pkgname=lazyarch-git
+pkgver=r21.6ce22d9 # Atualizado automaticamente na compilação
+pkgrel=1
+pkgdesc="Tool that automates boring or time-consuming installations and configurations (KISS)"
+arch=('any')
+url="https://github.com/MarceloAntonio/LazyArch"
+license=('MIT') # Altere se a licença no seu repositório for GPL, Apache, etc.
+depends=('bash' 'python' 'python-inquirerpy')
+makedepends=('git')
+provides=("lazyarch")
+conflicts=("lazyarch")
+source=("${pkgname}::git+https://github.com/MarceloAntonio/LazyArch.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/${pkgname}"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
+}
+
+package() {
+  cd "$srcdir/${pkgname}"
+
+  # Cria os diretórios padrão do sistema
+  install -d "$pkgdir/usr/share/LazyArch"
+  install -d "$pkgdir/usr/bin"
+
+  # Copia os arquivos essenciais para o diretório de dados (ignorando o Install.sh original)
+  cp -r LazyArch/* "$pkgdir/usr/share/LazyArch/"
+
+  # Dá permissão de execução ao script principal
+  chmod +x "$pkgdir/usr/share/LazyArch/LazyArch.sh"
+
+  # Cria o atalho com o nome exato que está no seu README
+  ln -s /usr/share/LazyArch/LazyArch.sh "$pkgdir/usr/bin/LazyArch"
+}
