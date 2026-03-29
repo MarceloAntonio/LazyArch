@@ -3,7 +3,7 @@ from InquirerPy import inquirer
 from .utils import pacman_install
 
 def install_aur():
- 
+
      install_dir="/tmp/yay"
      confirmation = inquirer.confirm(
         message="Are you sure you want to install AUR yay?",

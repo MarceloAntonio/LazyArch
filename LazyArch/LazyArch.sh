@@ -1,8 +1,5 @@
 #!/bin/bash
 
-SCRIPT_DIR="/usr/local/bin/LazyArch_files"
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
-# Executa o python dentro da pasta correta
 python "$SCRIPT_DIR/main.py"
-
-

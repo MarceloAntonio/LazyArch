@@ -75,7 +75,7 @@ fi
 echo "==> Installing LazyArch..."
 
 sudo mkdir -p /usr/local/bin/LazyArch_files
-sudo cp -r LazyArch/. /usr/local/bin/LazyArch_files/
+sudo cp -a LazyArch/. /usr/local/bin/LazyArch_files/
 
 sudo ln -sf /usr/local/bin/LazyArch_files/LazyArch.sh /usr/local/bin/LazyArch
 
