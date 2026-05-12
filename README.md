@@ -120,6 +120,13 @@ src/
 
 ---
 
+## Uninstall
+
+```bash
+curl -sSL https://raw.githubusercontent.com/MarceloAntonio/LazyArch/refs/heads/main/Uninstall.sh | bash
+```
+---
+
 ## Notes
 
 - LazyArch is designed exclusively for **Arch Linux-based systems**
