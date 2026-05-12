@@ -1,0 +1,15 @@
+services:
+  rust-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rust-dev
+    volumes:
+      - .:/app
+      - cargo-cache:/usr/local/cargo/registry
+    stdin_open: true
+    tty: true
+    command: bash
+
+volumes:
+  cargo-cache:
