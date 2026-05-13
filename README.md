@@ -20,6 +20,7 @@ Instead of searching for commands and copying them repeatedly, LazyArch does eve
 The project follows the **KISS (Keep It Simple, Stupid)** philosophy, aiming for simplicity and a hassle-free experience.
 
 > Previously written in Python, LazyArch has been fully rewritten in **Rust** — delivering a single native binary with no runtime dependencies.
+> You can view the old repository by clicking [here](https://github.com/MarceloAntonio/LazyArch_old).
 
 ---
 
