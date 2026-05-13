@@ -7,12 +7,13 @@ use crate::features::mirrors::update_mirrors;
 use crate::features::gaming::gaming_setup;
 use crate::features::docker::install_docker;
 use crate::features::languages::language_installer;
+use crate::features::pacman_cfg::pacman_cfg;
 
 
 
 pub fn main_menu(){
     loop {
-        let choices = vec!["Install AUR", "Change shell", "Install LazyVim", "Gaming Setup","Docker setup","Update Mirrors","Language Installer","Exit"];
+        let choices = vec!["Pacman Configuration","Install AUR", "Change shell", "Install LazyVim", "Gaming Setup","Docker setup","Update Mirrors","Language Installer","Exit"];
         let selection = Select::new()
         .with_prompt("\nSelect an option:")
         .items(&choices)
@@ -21,6 +22,7 @@ pub fn main_menu(){
         .unwrap();
     
 match choices[selection] {
+        "Pacman Configuration" => pacman_cfg(),
         "Install AUR" => install_aur(),
         "Change shell" => change_shell(),
         "Install LazyVim" => install_lazy_vim(),

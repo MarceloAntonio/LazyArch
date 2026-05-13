@@ -31,7 +31,7 @@ pub fn language_installer() {
             }
             3 => {
                 println!("==> Installing Java...");
-                pacman_install(&["jdk-openjdk", "jre-openjdk", "maven"]);
+                pacman_install(&["jdk-openjdk", "maven"]);
             }
             4 => {
                 println!("==> Installing Rust...");
