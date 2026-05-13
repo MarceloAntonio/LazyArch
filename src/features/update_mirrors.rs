@@ -3,7 +3,7 @@ use dialoguer::Select;
 use crate::system::pacman::pacman_install;
 
 pub fn update_mirrors() {
-    // Garante que o reflector está instalado
+    
     pacman_install(&["reflector"]);
 
     let countries = vec![
@@ -30,15 +30,15 @@ pub fn update_mirrors() {
         .args([
             "reflector",
             "--country", country,
-            "--age", "12",        // mirrors atualizados nas últimas 12h
+            "--age", "12",        
             "--protocol", "https",
-            "--sort", "rate",     // ordena por velocidade
+            "--sort", "rate",     
             "--save", "/etc/pacman.d/mirrorlist",
         ])
         .status()
         .expect("Failed to run reflector");
 
-    // Atualiza o banco de dados do pacman com os novos mirrors
+    
     Command::new("sudo")
         .args(["pacman", "-Sy"])
         .status()
