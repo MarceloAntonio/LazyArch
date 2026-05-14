@@ -2,17 +2,19 @@ use dialoguer::MultiSelect;
 use crate::system::pacman::pacman_install;
 
 pub fn fonts_installer() {
-    let fonts = vec![
-        "JetBrains Mono",
-        "Fira Code",
-        "Hack",
-        "Iosevka",
-        "Cascadia Code",
+    let fonts: Vec<(&str, &str)> = vec![
+        ("JetBrains Mono", "ttf-jetbrains-mono-nerd"),
+        ("Fira Code",      "ttf-firacode-nerd"),
+        ("Hack",           "ttf-hack-nerd"),
+        ("Iosevka",        "ttf-iosevka-nerd"),
+        ("Cascadia Code",  "ttf-cascadia-code-nerd"),
     ];
+
+    let names: Vec<&str> = fonts.iter().map(|(name, _)| *name).collect();
 
     let selected = MultiSelect::new()
         .with_prompt("Select fonts to install")
-        .items(&fonts)
+        .items(&names)
         .interact()
         .unwrap();
 
@@ -21,30 +23,10 @@ pub fn fonts_installer() {
         return;
     }
 
-    for idx in &selected {
-        match idx {
-            0 => {
-                println!("==> Installing JetBrains Mono...");
-                pacman_install(&["ttf-jetbrains-mono-nerd"]);
-            }
-            1 => {
-                println!("==> Installing Fira Code...");
-                pacman_install(&["ttf-firacode-nerd"]);
-            }
-            2 => {
-                println!("==> Installing Hack...");
-                pacman_install(&["ttf-hack-nerd"]);
-            }
-            3 => {
-                println!("==> Installing Iosevka...");
-                pacman_install(&["ttf-iosevka-nerd"]);
-            }
-            4 => {
-                println!("==> Installing Cascadia Code...");
-                pacman_install(&["ttf-cascadia-code-nerd"]);
-            }
-            _ => {}
-        }
+    for idx in selected {
+        let (name, package) = fonts[idx];
+        println!("==> Installing {}...", name);
+        pacman_install(&[package]);
     }
 
     println!("\n✓ Done! Fonts installed successfully.");

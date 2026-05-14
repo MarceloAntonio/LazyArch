@@ -7,7 +7,7 @@ use crate::features::mirrors::update_mirrors;
 use crate::features::gaming::gaming_setup;
 use crate::features::docker::install_docker;
 use crate::features::languages::language_installer;
-use crate::features::pacman_cfg::pacman_cfg;
+use crate::features::pacman::pacman_cfg;
 use crate::features::fonts::fonts_installer;
 use crate::features::bluetooth::bluetooth_setup;
 

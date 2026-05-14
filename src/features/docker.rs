@@ -1,16 +1,7 @@
 use std::process::Command;
 use crate::system::pacman::pacman_install;
+use crate::system::is_systemd_running::is_systemd_running;
 
-fn is_systemd_running() -> bool {
-    Command::new("systemctl")
-        .arg("is-system-running")
-        .output()
-        .map(|o| {
-            let out = String::from_utf8_lossy(&o.stdout);
-            !out.trim().contains("offline") && !out.trim().contains("unknown")
-        })
-        .unwrap_or(false)
-}
 
 pub fn install_docker() {
     pacman_install(&["docker", "docker-compose"]);
