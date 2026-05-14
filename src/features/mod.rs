@@ -7,3 +7,4 @@ pub mod docker;
 pub mod languages;
 pub mod pacman_cfg;
 pub mod fonts;
+pub mod bluetooth;
