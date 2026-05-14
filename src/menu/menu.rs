@@ -10,12 +10,14 @@ use crate::features::languages::language_installer;
 use crate::features::pacman::pacman_cfg;
 use crate::features::fonts::fonts_installer;
 use crate::features::bluetooth::bluetooth_setup;
+use crate::features::ssd::sdd_setup;
 
 
 
 pub fn main_menu(){
     loop {
-        let choices = vec!["Pacman Configuration","Install AUR","Bluetooth Setup","Install Nerd Fonts", "Change shell", "Install LazyVim", "GPU Drivers/Gaming Setup","Docker setup","Update Mirrors","Language Installer","Exit"];
+        let choices = vec!["Pacman Configuration","Install AUR","Bluetooth Setup","Install Nerd Fonts", "Change shell", "Install LazyVim", "GPU Drivers/Gaming Setup","Docker setup","Update Mirrors","Language Installer","SSD trim activation","Exit"];
+        
         let selection = Select::new()
         .with_prompt("\nSelect an option:")
         .items(&choices)
@@ -26,6 +28,7 @@ pub fn main_menu(){
 match choices[selection] {
         "Pacman Configuration" => pacman_cfg(),
         "Install AUR" => install_aur(),
+        "SSD trim activation" => sdd_setup(),
         "Change shell" => change_shell(),
         "Install LazyVim" => install_lazy_vim(),
         "Bluetooth Setup" => bluetooth_setup(),
