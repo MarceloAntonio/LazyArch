@@ -9,3 +9,4 @@ pub mod pacman;
 pub mod fonts;
 pub mod bluetooth;
 pub mod ssd;
+pub mod firewall;

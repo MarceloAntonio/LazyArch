@@ -1,23 +1,26 @@
 use dialoguer::{Select};
 
-use crate::features::aur::install_aur;
-use crate::features::shell::change_shell;
-use crate::features::lazyvim::install_lazy_vim;
-use crate::features::mirrors::update_mirrors;
-use crate::features::gaming::gaming_setup;
-use crate::features::docker::install_docker;
-use crate::features::languages::language_installer;
-use crate::features::pacman::pacman_cfg;
-use crate::features::fonts::fonts_installer;
-use crate::features::bluetooth::bluetooth_setup;
-use crate::features::ssd::sdd_setup;
+use crate::features::{
+    aur::install_aur,
+    shell::change_shell,
+    lazyvim::install_lazy_vim,
+    mirrors::update_mirrors,
+    gaming::gaming_setup,
+    docker::install_docker,
+    languages::language_installer,
+    pacman::pacman_cfg,
+    fonts::fonts_installer,
+    bluetooth::bluetooth_setup,
+    ssd::sdd_setup,
+    firewall::firewall_setup
+};
 
 
 
 pub fn main_menu(){
     loop {
-        let choices = vec!["Pacman Configuration","Install AUR","Bluetooth Setup","Install Nerd Fonts", "Change shell", "Install LazyVim", "GPU Drivers/Gaming Setup","Docker setup","Update Mirrors","Language Installer","SSD trim activation","Exit"];
-        
+        let choices = vec!["Pacman Configuration","Install AUR","Bluetooth Setup","Install Nerd Fonts", "Change shell", "Install LazyVim", "GPU Drivers/Gaming Setup","Docker setup","Update Mirrors","Language Installer","Firewall activation","SSD trim activation","Exit"];
+
         let selection = Select::new()
         .with_prompt("\nSelect an option:")
         .items(&choices)
@@ -29,6 +32,7 @@ match choices[selection] {
         "Pacman Configuration" => pacman_cfg(),
         "Install AUR" => install_aur(),
         "SSD trim activation" => sdd_setup(),
+        "Firewall activation" => firewall_setup(),
         "Change shell" => change_shell(),
         "Install LazyVim" => install_lazy_vim(),
         "Bluetooth Setup" => bluetooth_setup(),

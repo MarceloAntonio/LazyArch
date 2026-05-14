@@ -2,11 +2,21 @@ use dialoguer::MultiSelect;
 use crate::system::pacman::pacman_install;
 
 pub fn language_installer() {
-    let languages = vec!["Node.js", "Go", "Python", "Java", "Rust", "PHP", "C/C++"];
+    let languages: Vec<(&str, Vec<&str>)> = vec![
+        ("Node.js", vec!["nodejs", "npm"]),
+        ("Go",      vec!["go"]),
+        ("Python",  vec!["python", "python-pip", "python-virtualenv"]),
+        ("Java",    vec!["jdk-openjdk", "maven"]),
+        ("Rust",    vec!["rust","cargo"]),
+        ("PHP",     vec!["php", "php-fpm", "composer"]),
+        ("C/C++",   vec!["gcc", "gdb", "cmake", "make", "clang"]),
+    ];
+
+    let names: Vec<&str> = languages.iter().map(|(name, _)| *name).collect();
 
     let selected = MultiSelect::new()
         .with_prompt("Select languages to install")
-        .items(&languages)
+        .items(&names)
         .interact()
         .unwrap();
 
@@ -15,38 +25,10 @@ pub fn language_installer() {
         return;
     }
 
-    for idx in &selected {
-        match idx {
-            0 => {
-                println!("==> Installing Node.js...");
-                pacman_install(&["nodejs", "npm"]);
-            }
-            1 => {
-                println!("==> Installing Go...");
-                pacman_install(&["go"]);
-            }
-            2 => {
-                println!("==> Installing Python...");
-                pacman_install(&["python", "python-pip", "python-virtualenv"]);
-            }
-            3 => {
-                println!("==> Installing Java...");
-                pacman_install(&["jdk-openjdk", "maven"]);
-            }
-            4 => {
-                println!("==> Installing Rust...");
-                pacman_install(&["rust","cargo"]);
-            }
-            5 => {
-                println!("==> Installing PHP...");
-                pacman_install(&["php", "php-fpm", "composer"]);
-            }
-            6 => {
-                println!("==> Installing C/C++...");
-                pacman_install(&["gcc", "g++", "gdb", "cmake", "make", "clang"]);
-            }
-            _ => {}
-        }
+    for idx in selected {
+        let (name, packages) = &languages[idx];
+        println!("==> Installing {}...", name);
+        pacman_install(packages);
     }
 
     println!("\n✓ Done! Languages installed successfully.");
