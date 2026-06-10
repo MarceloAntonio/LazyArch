@@ -1,48 +1,43 @@
 use std::process::Command;
-use dialoguer::{Confirm};
+use dialoguer::Confirm;
 use crate::system::pacman::pacman_install;
 use crate::system::is_systemd_running::is_systemd_running;
-
+use crate::ui;
 
 pub fn bluetooth_setup() {
-        let mut bluetooth_packages = vec!["bluez","bluez-utils"];
+    let mut packages = vec!["bluez", "bluez-utils"];
 
-
-        let gui = Confirm::new()
+    let gui = Confirm::new()
         .with_prompt("Install Blueman (GUI manager)?")
-        .default(true) 
+        .default(true)
         .interact()
         .unwrap();
 
-        if gui{
-            bluetooth_packages.push("blueman")
-        }
+    if gui {
+        packages.push("blueman");
+    }
 
-        let pipeware = Confirm::new()
+    let pipewire = Confirm::new()
         .with_prompt("Are you using PipeWire? (recommended)")
-        .default(true) 
+        .default(true)
         .interact()
         .unwrap();
 
-        if pipeware{
-            bluetooth_packages.push("pipewire-pulse")
-        }
+    if pipewire {
+        packages.push("pipewire-pulse");
+    }
 
-        pacman_install(&bluetooth_packages);
+    pacman_install(&packages);
 
-        if is_systemd_running(){
+    if is_systemd_running() {
+        Command::new("sudo")
+            .args(["systemctl", "enable", "--now", "bluetooth"])
+            .status()
+            .expect("Failed to enable bluetooth service");
+    } else {
+        ui::warn("Systemd not running, skipping service enable.");
+        println!("  Run manually: sudo systemctl enable --now bluetooth");
+    }
 
-            Command::new("sudo")
-                .args(["systemctl", "enable", "--now", "bluetooth"])
-                .status()
-                .unwrap();
-        }
-        else{
-            println!("Systemd not running, skipping service enable.");
-            println!("Run manually: sudo systemctl enable --now bluetooth");
-        }
-
-
-        println!("Bluetooth installed!");
-
+    ui::success("Bluetooth installed!");
 }

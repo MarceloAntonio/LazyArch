@@ -1,14 +1,14 @@
 use std::process::Command;
 use dialoguer::Select;
 use crate::system::pacman::pacman_install;
+use crate::ui;
 
 pub fn update_mirrors() {
-    
     pacman_install(&["reflector"]);
 
     let countries = vec![
         "Brazil",
-        "United States", 
+        "United States",
         "Germany",
         "France",
         "Japan",
@@ -24,25 +24,24 @@ pub fn update_mirrors() {
 
     let country = countries[idx];
 
-    println!("==> Updating mirrors for {}...", country);
+    ui::info(&format!("Updating mirrors for {}...", country));
 
     Command::new("sudo")
         .args([
             "reflector",
             "--country", country,
-            "--age", "12",        
+            "--age", "12",
             "--protocol", "https",
-            "--sort", "rate",     
+            "--sort", "rate",
             "--save", "/etc/pacman.d/mirrorlist",
         ])
         .status()
         .expect("Failed to run reflector");
 
-    
     Command::new("sudo")
         .args(["pacman", "-Sy"])
         .status()
-        .expect("Failed to update pacman database");
+        .expect("Failed to sync pacman");
 
-    println!("✓ Mirrors updated successfully!");
+    ui::success("Mirrors updated!");
 }

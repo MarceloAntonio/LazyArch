@@ -1,16 +1,16 @@
-use std::process::Command;
-use dialoguer::{Confirm};
-use crate::system::pacman::pacman_install;
 use std::fs;
 use std::path::PathBuf;
+use std::process::Command;
+use dialoguer::Confirm;
+use crate::system::pacman::pacman_install;
+use crate::ui;
 
-fn setup_cfg_lazyvim() {
+fn setup_catppuccin() {
     let home = std::env::var("HOME").expect("HOME not set");
-    
     let plugins_dir = PathBuf::from(&home).join(".config/nvim/lua/plugins");
     fs::create_dir_all(&plugins_dir).expect("Failed to create plugins directory");
 
-    let catppuccin_config = r#"return {
+    let config = r#"return {
   {
     'catppuccin/nvim',
     name = 'catppuccin',
@@ -37,54 +37,45 @@ fn setup_cfg_lazyvim() {
 }
 "#;
 
-    let config_path = plugins_dir.join("catppuccin.lua");
-    fs::write(&config_path, catppuccin_config).expect("Failed to write catppuccin.lua");
-
-    println!("✓ Catppuccin config written to {:?}", config_path);
+    let path = plugins_dir.join("catppuccin.lua");
+    fs::write(&path, config).expect("Failed to write catppuccin.lua");
+    ui::success(&format!("Catppuccin config written to {:?}", path));
 }
-
 
 pub fn install_lazy_vim() {
     let home = std::env::var("HOME").expect("HOME not set");
     let nvim_path = format!("{}/.config/nvim", home);
     let nvim_git = format!("{}/.config/nvim/.git", home);
 
-    let confirmation = Confirm::new()
-        .with_prompt("Do you want to add a customization?")
-        .default(true) 
+    let customization = Confirm::new()
+        .with_prompt("Add Catppuccin theme customization?")
+        .default(true)
         .interact()
         .unwrap();
 
+    ui::info("Installing dependencies...");
+    pacman_install(&["neovim", "git"]);
 
-    println!("\n\n# Installing dependencies #\n\n");
-    pacman_install(&["nvim", "git"]);
-
-    println!("\n\n# Cloning repository and doing installation #\n\n");
+    ui::info("Cloning LazyVim starter...");
     Command::new("git")
-    .args(["clone", "https://github.com/LazyVim/starter", &nvim_path])
-    .status()
-    .expect("Failed to clone LazyVim");
+        .args(["clone", "https://github.com/LazyVim/starter", &nvim_path])
+        .status()
+        .expect("Failed to clone LazyVim");
 
-
-    if confirmation{
-    println!("\n\n# installing customization #\n\n");
-    setup_cfg_lazyvim();
+    if customization {
+        ui::info("Applying Catppuccin theme...");
+        setup_catppuccin();
     }
 
     Command::new("nvim")
-        .args(["--headless","+Lazy!","sync","+qa"])
+        .args(["--headless", "+Lazy!", "sync", "+qa"])
         .status()
-        .expect("Failed to clean cache");
-    
-    println!("\n\n# Cleaning cache #\n\n");
+        .expect("Failed to sync LazyVim plugins");
+
     Command::new("rm")
         .args(["-rf", &nvim_git])
         .status()
-        .expect("Failed to clean cache");
+        .expect("Failed to clean .git directory");
 
-
-
-
-
-    println!("\n\n# Lazy vim installed successfully #\n\n");
+    ui::success("LazyVim installed!");
 }

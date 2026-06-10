@@ -1,8 +1,8 @@
 use std::process::Command;
-use dialoguer::{MultiSelect};
+use dialoguer::MultiSelect;
 use crate::system::pacman::pacman_install;
+use crate::ui;
 
-#[derive(Debug)]
 enum GpuVendor {
     Intel,
     Amd,
@@ -15,17 +15,13 @@ fn detect_gpu() -> GpuVendor {
         .output()
         .expect("Failed to run lspci");
 
-    let output_str = String::from_utf8_lossy(&output.stdout).to_lowercase();
+    let text = String::from_utf8_lossy(&output.stdout).to_lowercase();
 
-    for line in output_str.lines() {
+    for line in text.lines() {
         if line.contains("vga") || line.contains("3d controller") || line.contains("display") {
-            if line.contains("nvidia") {
-                return GpuVendor::Nvidia;
-            } else if line.contains("amd") || line.contains("radeon") || line.contains("advanced micro") {
-                return GpuVendor::Amd;
-            } else if line.contains("intel") {
-                return GpuVendor::Intel;
-            }
+            if line.contains("nvidia") { return GpuVendor::Nvidia; }
+            if line.contains("amd") || line.contains("radeon") || line.contains("advanced micro") { return GpuVendor::Amd; }
+            if line.contains("intel") { return GpuVendor::Intel; }
         }
     }
 
@@ -36,95 +32,70 @@ fn enable_multilib() {
     let content = std::fs::read_to_string("/etc/pacman.conf")
         .expect("Failed to read pacman.conf");
 
-    
     if !content.contains("#[multilib]") {
-        println!("✓ Multilib already enabled, skipping...");
+        ui::success("Multilib already enabled, skipping...");
         return;
     }
 
-    println!("==> Enabling multilib...");
-    let updated = content
-        .replace("#[multilib]\n#Include = /etc/pacman.d/mirrorlist",
-                 "[multilib]\nInclude = /etc/pacman.d/mirrorlist");
-
-    std::fs::write("/tmp/pacman.conf.tmp", updated)
-        .expect("Failed to write temp pacman.conf");
+    ui::info("Enabling multilib...");
 
     Command::new("sudo")
-        .args(["cp", "/tmp/pacman.conf.tmp", "/etc/pacman.conf"])
+        .args(["sed", "-i", "s/^#\\[multilib\\]/[multilib]/", "/etc/pacman.conf"])
         .status()
-        .expect("Failed to update pacman.conf");
+        .expect("Failed to uncomment [multilib]");
+
+    Command::new("sudo")
+        .args(["sed", "-i", "/^\\[multilib\\]/{n;s/^#//}", "/etc/pacman.conf"])
+        .status()
+        .expect("Failed to uncomment multilib Include");
 
     Command::new("sudo")
         .args(["pacman", "-Sy"])
         .status()
         .expect("Failed to sync pacman");
 
-    println!("✓ Multilib enabled!");
+    ui::success("Multilib enabled!");
 }
 
 fn install_gpu_drivers() {
-    println!("==> Detecting GPU...");
+    ui::info("Detecting GPU...");
 
     match detect_gpu() {
         GpuVendor::Intel => {
-            println!("🔵 Intel GPU detected");
-            pacman_install(&[
-                "xf86-video-intel",
-                "mesa",
-                "vulkan-intel",
-                "lib32-mesa",
-                "lib32-vulkan-intel",
-            ]);
+            println!("  🔵 Intel GPU detected");
+            pacman_install(&["xf86-video-intel", "mesa", "vulkan-intel", "lib32-mesa", "lib32-vulkan-intel"]);
         }
         GpuVendor::Amd => {
-            println!("🔴 AMD GPU detected");
-            pacman_install(&[
-                "xf86-video-amdgpu",
-                "mesa",
-                "vulkan-radeon",
-                "lib32-mesa",
-                "lib32-vulkan-radeon",
-            ]);
+            println!("  🔴 AMD GPU detected");
+            pacman_install(&["xf86-video-amdgpu", "mesa", "vulkan-radeon", "lib32-mesa", "lib32-vulkan-radeon"]);
         }
         GpuVendor::Nvidia => {
-            println!("🟢 NVIDIA GPU detected");
-            pacman_install(&[
-                "nvidia",
-                "nvidia-utils",
-                "nvidia-settings",
-                "lib32-nvidia-utils",
-            ]);
+            println!("  🟢 NVIDIA GPU detected");
+            pacman_install(&["nvidia", "nvidia-utils", "nvidia-settings", "lib32-nvidia-utils"]);
         }
         GpuVendor::Unknown => {
-            println!("⚠️  Could not detect GPU automatically.");
-            println!("Please install drivers manually.");
+            ui::warn("Could not detect GPU. Install drivers manually.");
             return;
         }
     }
 
-    println!("✓ GPU drivers installed!");
+    ui::success("GPU drivers installed!");
 }
 
 fn install_proton_ge() {
-    let home = std::env::var("HOME").unwrap();
+    let home = std::env::var("HOME").expect("HOME not set");
     let compat_dir = format!("{}/.steam/root/compatibilitytools.d", home);
     let tmp_tar = "/tmp/proton-ge.tar.gz";
 
-    println!("==> Fetching latest Proton-GE release...");
-
+    ui::info("Fetching latest Proton-GE release...");
 
     let output = Command::new("curl")
-        .args([
-            "-s",
-            "https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest",
-        ])
+        .args(["-s", "https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest"])
         .output()
         .expect("Failed to fetch Proton-GE release info");
 
     let json = String::from_utf8_lossy(&output.stdout);
 
-    
     let url = json
         .lines()
         .find(|l| l.contains("browser_download_url") && l.contains(".tar.gz"))
@@ -132,16 +103,15 @@ fn install_proton_ge() {
         .expect("Failed to find Proton-GE download URL")
         .to_string();
 
-    println!("==> Downloading {}...", url);
+    ui::info(&format!("Downloading {}...", url));
     Command::new("curl")
         .args(["-L", &url, "-o", tmp_tar])
         .status()
         .expect("Failed to download Proton-GE");
 
-    std::fs::create_dir_all(&compat_dir)
-        .expect("Failed to create compatibilitytools.d");
+    std::fs::create_dir_all(&compat_dir).expect("Failed to create compatibilitytools.d");
 
-    println!("==> Extracting Proton-GE...");
+    ui::info("Extracting Proton-GE...");
     Command::new("tar")
         .args(["-xzf", tmp_tar, "-C", &compat_dir])
         .status()
@@ -149,19 +119,15 @@ fn install_proton_ge() {
 
     std::fs::remove_file(tmp_tar).ok();
 
-    println!("✓ Proton-GE installed! Select it in Steam > Properties > Compatibility.");
+    ui::success("Proton-GE installed! Select it in Steam > Properties > Compatibility.");
 }
 
 pub fn gaming_setup() {
     println!("\n🎮 Gaming Setup\n");
 
-    
     install_gpu_drivers();
-
- 
     enable_multilib();
 
-    
     let options = vec![
         "Steam",
         "Wine + Winetricks + Lutris",
@@ -173,26 +139,31 @@ pub fn gaming_setup() {
     let selected = MultiSelect::new()
         .with_prompt("Select what you want to install")
         .items(&options)
-        .defaults(&[true, true, true, true, false]) 
+        .defaults(&[true, true, true, true, false])
         .interact()
         .unwrap();
+
+    if selected.is_empty() {
+        println!("Nothing selected, skipping...");
+        return;
+    }
 
     for idx in &selected {
         match idx {
             0 => {
-                println!("==> Installing Steam...");
+                ui::info("Installing Steam...");
                 pacman_install(&["steam"]);
             }
             1 => {
-                println!("==> Installing Wine + Lutris...");
+                ui::info("Installing Wine + Lutris...");
                 pacman_install(&["wine", "winetricks", "lutris"]);
             }
             2 => {
-                println!("==> Installing Gamemode...");
+                ui::info("Installing Gamemode...");
                 pacman_install(&["gamemode", "lib32-gamemode"]);
             }
             3 => {
-                println!("==> Installing MangoHud...");
+                ui::info("Installing MangoHud...");
                 pacman_install(&["mangohud", "lib32-mangohud"]);
             }
             4 => install_proton_ge(),
@@ -200,17 +171,12 @@ pub fn gaming_setup() {
         }
     }
 
-    if selected.is_empty() {
-        println!("Nothing selected, skipping...");
-        return;
-    }
-
-    println!("\n✓ Gaming setup complete!");
+    ui::success("Gaming setup complete!");
 
     if selected.contains(&0) {
-        println!("Tip: In Steam, enable Proton in Settings → Compatibility for all games.");
+        println!("  Tip: Enable Proton in Steam > Settings > Compatibility.");
     }
     if selected.contains(&4) {
-        println!("Tip: Select Proton-GE in Steam → Game Properties → Compatibility.");
+        println!("  Tip: Select Proton-GE in Steam > Game Properties > Compatibility.");
     }
 }

@@ -26,10 +26,41 @@ The project follows the **KISS (Keep It Simple, Stupid)** philosophy, aiming for
 
 ## Features
 
-- Install and automatically configure shells (Fish, Zsh, Bash)
-- Install LazyVim
+### Base System
+- Pacman configuration (colors, parallel downloads, ILoveCandy)
+- Mirror optimization via reflector (per-country)
 - Install AUR helpers (yay)
-- Git configuration with optional SSH key generation
+
+### Hardware
+- GPU driver auto-detection and installation (Intel, AMD, NVIDIA)
+- Bluetooth setup with optional GUI (Blueman) and PipeWire support
+- SSD TRIM activation with automatic weekly timer
+
+### Desktop
+- Desktop Environment / Window Manager installer (i3, Hyprland, bspwm, GNOME, KDE Plasma)
+- Nerd Fonts installer (JetBrains Mono, Fira Code, Hack, Iosevka, Cascadia Code)
+- Shell switcher (Bash, Zsh, Fish)
+
+### Development
+- LazyVim installation with optional Catppuccin theme
+- Programming language installer (Node.js, Go, Python, Java, Rust, PHP, C/C++)
+- Docker + Docker Compose + Buildx setup
+- Git configuration with SSH key generation (ed25519)
+
+### Security
+- UFW firewall with profile presets (Personal, Developer, Custom)
+
+### Maintenance
+- Remove orphaned packages
+- Clean pacman cache
+- Clean systemd journal logs
+- Check failed services and boot errors
+
+### Other
+- Full **First Setup** wizard (runs all tasks in sequence)
+- Gaming setup (Steam, Wine, Lutris, Gamemode, MangoHud, Proton-GE)
+- Colored terminal output
+- `--version` and `--help` CLI flags
 - Detects Arch and Arch-based distros automatically
 
 ---
@@ -78,7 +109,9 @@ cargo build --release
 After installation, run from anywhere:
 
 ```bash
-lazy-arch
+lazy-arch            # Start the interactive menu
+lazy-arch --help     # Show help
+lazy-arch --version  # Show version
 ```
 
 ---
@@ -104,18 +137,31 @@ cargo run
 ```
 src/
 ├── main.rs
+├── ui.rs
 ├── menu/
 │   ├── mod.rs
 │   └── menu.rs
 ├── features/
 │   ├── mod.rs
-│   ├── shell.rs
 │   ├── aur.rs
+│   ├── bluetooth.rs
+│   ├── desktop.rs
+│   ├── docker.rs
+│   ├── firewall.rs
+│   ├── fonts.rs
+│   ├── gaming.rs
+│   ├── git.rs
+│   ├── languages.rs
 │   ├── lazyvim.rs
-│   └── setup_cfg_lazyvim.rs
+│   ├── maintenance.rs
+│   ├── mirrors.rs
+│   ├── pacman.rs
+│   ├── shell.rs
+│   └── ssd.rs
 └── system/
     ├── mod.rs
     ├── is_arch.rs
+    ├── is_systemd_running.rs
     └── pacman.rs
 ```
 

@@ -1,5 +1,6 @@
 use dialoguer::MultiSelect;
 use crate::system::pacman::pacman_install;
+use crate::ui;
 
 pub fn fonts_installer() {
     let fonts: Vec<(&str, &str)> = vec![
@@ -25,9 +26,9 @@ pub fn fonts_installer() {
 
     for idx in selected {
         let (name, package) = fonts[idx];
-        println!("==> Installing {}...", name);
+        ui::info(&format!("Installing {}...", name));
         pacman_install(&[package]);
     }
 
-    println!("\n✓ Done! Fonts installed successfully.");
+    ui::success("Fonts installed!");
 }

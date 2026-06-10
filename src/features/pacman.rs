@@ -1,32 +1,32 @@
 use std::process::Command;
+use crate::ui;
 
-pub fn pacman_cfg(){
+pub fn pacman_cfg() {
+    let path = "/etc/pacman.conf";
 
-        let pacman_path = "/etc/pacman.conf";
-
-        println!("==> Enabling Colors");
-        Command::new("sudo")
-        .args(["sed", "-i", "s/#Color/Color/", pacman_path])
+    ui::info("Enabling Colors...");
+    Command::new("sudo")
+        .args(["sed", "-i", "s/#Color/Color/", path])
         .status()
-        .expect("Failed to write the pacman.conf file");
+        .expect("Failed to configure pacman");
 
-        println!("==> Enabling parallel downloads");
-        Command::new("sudo")
-        .args(["sed", "-i", "s/#ParallelDownloads = 5/ParallelDownloads = 5/", pacman_path])
+    ui::info("Enabling parallel downloads...");
+    Command::new("sudo")
+        .args(["sed", "-i", "s/#ParallelDownloads = 5/ParallelDownloads = 5/", path])
         .status()
-        .expect("Failed to write the pacman.conf file");
-    
-        println!("==> Enabling progress bar");
-        Command::new("sudo")
-        .args(["sed", "-i", "s/^NoProgressBar/#NoProgressBar/", pacman_path])
+        .expect("Failed to configure pacman");
+
+    ui::info("Enabling progress bar...");
+    Command::new("sudo")
+        .args(["sed", "-i", "s/^NoProgressBar/#NoProgressBar/", path])
         .status()
-        .expect("Failed to write the pacman.conf file");
+        .expect("Failed to configure pacman");
 
-
-        println!("==> Adding ILoveCandy");
-        Command::new("sudo")
-        .args(["sed", "-i", "/^Color$/a ILoveCandy", pacman_path])
+    ui::info("Adding ILoveCandy...");
+    Command::new("sudo")
+        .args(["sed", "-i", "/^Color$/a ILoveCandy", path])
         .status()
-        .expect("Failed to write the pacman.conf file");
+        .expect("Failed to configure pacman");
 
+    ui::success("Pacman configured!");
 }
