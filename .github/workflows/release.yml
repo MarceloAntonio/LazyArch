@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Vai rodar sempre que você criar uma tag começando com 'v' (ex: v1.0.0)
+
+jobs:
+  build-and-release:
+    name: Build and Publish Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Permissão necessária para o bot criar a página de release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Release Binary
+        run: cargo build --release
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/release/lazy-arch
+          generate_release_notes: true # Gera notas automáticas baseadas nos seus commits
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
