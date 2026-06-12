@@ -7,9 +7,14 @@ pub fn desktop_installer() {
     let desktops: Vec<(&str, Vec<&str>)> = vec![
         ("i3 (Tiling WM, X11)",          vec!["i3-wm", "i3status", "i3lock", "dmenu", "feh", "picom", "xorg-server", "xorg-xinit"]),
         ("Hyprland (Tiling WM, Wayland)", vec!["hyprland", "waybar", "rofi", "hyprpaper", "xdg-desktop-portal-hyprland", "qt5-wayland", "qt6-wayland"]),
+        ("Sway (Tiling WM, Wayland)",    vec!["sway", "swaybg", "waybar", "xorg-xwayland", "polkit"]),
         ("bspwm (Tiling WM, X11)",       vec!["bspwm", "sxhkd", "feh", "picom", "dmenu", "xorg-server", "xorg-xinit"]),
+        ("Awesome (Tiling WM, X11)",     vec!["awesome", "picom", "dmenu", "feh", "xorg-server", "xorg-xinit"]),
         ("GNOME",                         vec!["gnome", "gnome-tweaks", "gdm"]),
         ("KDE Plasma",                    vec!["plasma", "kde-applications", "sddm"]),
+        ("XFCE",                          vec!["xfce4", "xfce4-goodies"]),
+        ("Cinnamon",                      vec!["cinnamon", "nemo"]),
+        ("MATE",                          vec!["mate", "mate-extra"]),
     ];
 
     let names: Vec<&str> = desktops.iter().map(|(name, _)| *name).collect();
@@ -25,15 +30,15 @@ pub fn desktop_installer() {
     ui::info(&format!("Installing {}...", name));
     pacman_install(packages);
 
-    match selected {
-        3 => {
+    match *name {
+        "GNOME" => {
             Command::new("sudo")
                 .args(["systemctl", "enable", "gdm"])
                 .status()
                 .expect("Failed to enable GDM");
             ui::success("GDM enabled.");
         }
-        4 => {
+        "KDE Plasma" => {
             Command::new("sudo")
                 .args(["systemctl", "enable", "sddm"])
                 .status()

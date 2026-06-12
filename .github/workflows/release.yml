@@ -26,6 +26,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: target/release/lazy-arch
-          generate_release_notes: true # Gera notas automáticas baseadas nos seus commits
+          generate_release_notes: true 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

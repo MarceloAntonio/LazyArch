@@ -11,6 +11,11 @@ pub fn language_installer() {
         ("Rust",    vec!["rust", "cargo"]),
         ("PHP",     vec!["php", "php-fpm", "composer"]),
         ("C/C++",   vec!["gcc", "gdb", "cmake", "make", "clang"]),
+        ("Ruby",    vec!["ruby"]),
+        ("Elixir",  vec!["elixir"]),
+        ("Zig",     vec!["zig"]),
+        ("Lua",     vec!["lua", "luarocks"]),
+        ("C#/.NET", vec!["dotnet-sdk"]),
     ];
 
     let names: Vec<&str> = languages.iter().map(|(name, _)| *name).collect();

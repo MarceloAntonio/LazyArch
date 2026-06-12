@@ -13,7 +13,7 @@ fn set_shell(shell: &str, shell_path: &str) {
 }
 
 pub fn change_shell() {
-    let choices = vec!["Bash", "Zsh", "Fish", "Back"];
+    let choices = vec!["Bash", "Zsh", "Fish", "Nushell", "Elvish", "Tcsh", "Back"];
 
     let selection = Select::new()
         .with_prompt("Select a shell")
@@ -34,6 +34,18 @@ pub fn change_shell() {
         "Fish" => {
             pacman_install(&["fish"]);
             set_shell("fish", "/usr/bin/fish");
+        }
+        "Nushell" => {
+            pacman_install(&["nushell"]);
+            set_shell("nu", "/usr/bin/nu");
+        }
+        "Elvish" => {
+            pacman_install(&["elvish"]);
+            set_shell("elvish", "/usr/bin/elvish");
+        }
+        "Tcsh" => {
+            pacman_install(&["tcsh"]);
+            set_shell("tcsh", "/usr/bin/tcsh");
         }
         "Back" => {}
         _ => ui::error("Unrecognized option."),

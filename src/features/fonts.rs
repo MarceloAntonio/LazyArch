@@ -9,6 +9,11 @@ pub fn fonts_installer() {
         ("Hack",           "ttf-hack-nerd"),
         ("Iosevka",        "ttf-iosevka-nerd"),
         ("Cascadia Code",  "ttf-cascadia-code-nerd"),
+        ("Meslo",          "ttf-meslo-nerd"),
+        ("Ubuntu",         "ttf-ubuntu-nerd"),
+        ("Roboto Mono",    "ttf-roboto-mono-nerd"),
+        ("Victor Mono",    "ttf-victor-mono-nerd"),
+        ("Inconsolata",    "ttf-inconsolata-nerd"),
     ];
 
     let names: Vec<&str> = fonts.iter().map(|(name, _)| *name).collect();
