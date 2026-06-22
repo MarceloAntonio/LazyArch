@@ -110,8 +110,32 @@ After installation, run from anywhere:
 
 ```bash
 lazy-arch            # Start the interactive menu
-lazy-arch --help     # Show help
-lazy-arch --version  # Show version
+```
+
+You can also bypass the menu and run specific setup modules directly using CLI arguments:
+
+```text
+Usage: lazy-arch [OPTIONS]
+
+Options:
+  -v, --version       Show version
+  -h, --help          Show this help
+  --first-setup       Run the first setup wizard
+  --pacman            Configure Pacman
+  --mirrors           Update Mirrors
+  --aur               Install AUR helper
+  --gaming            GPU Drivers & Gaming Setup
+  --bluetooth         Bluetooth Setup
+  --ssd               SSD Trim Activation
+  --desktop           Desktop/WM Installer
+  --fonts             Install Nerd Fonts
+  --shell             Change Shell
+  --lazyvim           Install LazyVim
+  --languages         Language Installer
+  --docker            Docker Setup
+  --git               Git Setup
+  --firewall          Firewall Setup
+  --maintenance       System Maintenance
 ```
 
 ---

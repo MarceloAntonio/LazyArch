@@ -2,6 +2,7 @@
 pub mod menu;
 
 pub use{
-menu::main_menu,
+    menu::main_menu,
+    menu::first_setup,
 };
 
