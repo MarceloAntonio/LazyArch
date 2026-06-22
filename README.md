@@ -122,13 +122,12 @@ If you want to test without touching your system:
 
 ```bash
 # Build and enter the container
-docker compose up -d
-docker compose exec rust-dev bash
+docker compose up -d && docker compose exec rust-dev bash
 
 # Inside the container
-cargo run
+lazy-arch
 ```
-> Before running Lazy Arch, run the following command to change the password for the dev user and set a password of your choice: <br>`sudo passwd dev`
+> Default password: `dev`
 
 ---
 
