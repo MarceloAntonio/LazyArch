@@ -1,4 +1,4 @@
-use dialoguer::{MultiSelect, Select};
+use dialoguer::{Confirm, MultiSelect, Select};
 
 use crate::features::*;
 use crate::ui;
@@ -7,28 +7,50 @@ pub struct Feature {
     pub flag: &'static str,
     pub name: &'static str,
     pub run: fn(),
+    /// Checks the system: true if this is already installed/configured.
+    pub done: fn() -> bool,
     pub first_setup: bool,
+}
+
+impl Feature {
+    fn label(&self) -> String {
+        if (self.done)() { format!("{} ✓", self.name) } else { self.name.to_string() }
+    }
+
+    /// Asks before redoing something that's already done.
+    pub fn run_checked(&self) {
+        let again = !(self.done)()
+            || Confirm::new()
+                .with_prompt(format!("{} is already done. Run it again?", self.name))
+                .default(false)
+                .interact()
+                .unwrap();
+
+        if again {
+            (self.run)();
+        }
+    }
 }
 
 // Single source of truth: menu, CLI flags, --help and First Setup all come from here.
 pub const FEATURES: &[Feature] = &[
     // Base System
-    Feature { flag: "--pacman",      name: "Pacman Configuration",     run: pacman_config::run, first_setup: true },
-    Feature { flag: "--mirrors",     name: "Update Mirrors",           run: mirrors::run,       first_setup: true },
-    Feature { flag: "--aur",         name: "Install AUR Helper",       run: aur::run,           first_setup: true },
+    Feature { flag: "--pacman",      name: "Pacman Configuration",     run: pacman_config::run, done: pacman_config::done, first_setup: true },
+    Feature { flag: "--mirrors",     name: "Update Mirrors",           run: mirrors::run,       done: mirrors::done,    first_setup: true },
+    Feature { flag: "--aur",         name: "Install AUR Helper",       run: aur::run,           done: aur::done,        first_setup: true },
     // Hardware
-    Feature { flag: "--gaming",      name: "GPU Drivers/Gaming Setup", run: gaming::run,        first_setup: true },
-    Feature { flag: "--bluetooth",   name: "Bluetooth Setup",          run: bluetooth::run,     first_setup: true },
-    Feature { flag: "--ssd",         name: "SSD Trim Activation",      run: ssd::run,           first_setup: true },
+    Feature { flag: "--gaming",      name: "GPU Drivers/Gaming Setup", run: gaming::run,        done: gaming::done,     first_setup: true },
+    Feature { flag: "--bluetooth",   name: "Bluetooth Setup",          run: bluetooth::run,     done: bluetooth::done,  first_setup: true },
+    Feature { flag: "--ssd",         name: "SSD Trim Activation",      run: ssd::run,           done: ssd::done,        first_setup: true },
     // Desktop
-    Feature { flag: "--fonts",       name: "Install Nerd Fonts",       run: fonts::run,         first_setup: true },
-    Feature { flag: "--shell",       name: "Change Shell",             run: shell::run,         first_setup: true },
+    Feature { flag: "--fonts",       name: "Install Nerd Fonts",       run: fonts::run,         done: fonts::done,      first_setup: true },
+    Feature { flag: "--shell",       name: "Change Shell",             run: shell::run,         done: shell::done,      first_setup: true },
     // Dev
-    Feature { flag: "--languages",   name: "Language Installer",       run: languages::run,     first_setup: false },
-    Feature { flag: "--docker",      name: "Docker Setup",             run: docker::run,        first_setup: false },
-    Feature { flag: "--git",         name: "Git Setup",                run: git::run,           first_setup: true },
+    Feature { flag: "--languages",   name: "Language Installer",       run: languages::run,     done: || false,         first_setup: false },
+    Feature { flag: "--docker",      name: "Docker Setup",             run: docker::run,        done: docker::done,     first_setup: false },
+    Feature { flag: "--git",         name: "Git Setup",                run: git::run,           done: git::done,        first_setup: true },
     // Maintenance
-    Feature { flag: "--maintenance", name: "System Maintenance",       run: maintenance::run,   first_setup: false },
+    Feature { flag: "--maintenance", name: "System Maintenance",       run: maintenance::run,   done: || false,         first_setup: false },
 ];
 
 pub fn print_help() {
@@ -45,12 +67,14 @@ pub fn print_help() {
 
 pub fn first_setup() {
     let steps: Vec<&Feature> = FEATURES.iter().filter(|f| f.first_setup).collect();
-    let names: Vec<&str> = steps.iter().map(|f| f.name).collect();
+    let names: Vec<String> = steps.iter().map(|f| f.label()).collect();
+    // Already done steps start unchecked, tick them to run again.
+    let pending: Vec<bool> = steps.iter().map(|f| !(f.done)()).collect();
 
     let selected = MultiSelect::new()
-        .with_prompt("Select what to run in First Setup")
+        .with_prompt("Select what to run in First Setup (✓ = already done)")
         .items(&names)
-        .defaults(&vec![true; steps.len()])
+        .defaults(&pending)
         .interact()
         .unwrap();
 
@@ -73,11 +97,12 @@ pub fn first_setup() {
 }
 
 pub fn main_menu() {
-    let mut items = vec!["First Setup"];
-    items.extend(FEATURES.iter().map(|f| f.name));
-    items.push("Exit");
-
     loop {
+        // Rebuilt every loop so ✓ reflects what was just done.
+        let mut items = vec!["First Setup".to_string()];
+        items.extend(FEATURES.iter().map(Feature::label));
+        items.push("Exit".to_string());
+
         let selection = Select::new()
             .with_prompt("\nSelect an option")
             .items(&items)
@@ -87,7 +112,7 @@ pub fn main_menu() {
 
         match selection {
             0 => first_setup(),
-            i if i <= FEATURES.len() => (FEATURES[i - 1].run)(),
+            i if i <= FEATURES.len() => FEATURES[i - 1].run_checked(),
             _ => return,
         }
     }

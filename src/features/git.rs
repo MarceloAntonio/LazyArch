@@ -1,6 +1,10 @@
 use dialoguer::{Confirm, Input};
-use crate::system::{self, pacman_install};
+use crate::system::{self, pacman_install, succeeds};
 use crate::ui;
+
+pub fn done() -> bool {
+    succeeds("git", &["config", "--global", "user.name"])
+}
 
 pub fn run() {
     ui::info("Git Configuration\n");

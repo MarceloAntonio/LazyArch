@@ -1,14 +1,28 @@
 use std::process::Command;
 use dialoguer::MultiSelect;
-use crate::system::{backup, pacman_install, sudo};
+use crate::system::{backup, is_installed, pacman_install, sudo};
 use crate::ui;
 
 const PACMAN_CONF: &str = "/etc/pacman.conf";
 
-fn enable_multilib() {
-    let content = std::fs::read_to_string(PACMAN_CONF).expect("Failed to read pacman.conf");
+const EXTRAS: [(&str, &[&str]); 4] = [
+    ("Steam",                            &["steam"]),
+    ("Wine + Winetricks + Lutris",       &["wine", "winetricks", "lutris"]),
+    ("Gamemode (performance optimizer)", &["gamemode", "lib32-gamemode"]),
+    ("MangoHud (FPS overlay)",           &["mangohud", "lib32-mangohud"]),
+];
 
-    if !content.contains("#[multilib]") {
+fn multilib_enabled() -> bool {
+    std::fs::read_to_string(PACMAN_CONF).is_ok_and(|c| c.lines().any(|l| l == "[multilib]"))
+}
+
+/// Multilib on and at least one gaming extra installed.
+pub fn done() -> bool {
+    multilib_enabled() && EXTRAS.iter().any(|(_, packages)| is_installed(packages))
+}
+
+fn enable_multilib() {
+    if multilib_enabled() {
         ui::success("Multilib already enabled, skipping...");
         return;
     }
@@ -67,13 +81,7 @@ pub fn run() {
     enable_multilib();
     let mut packages = gpu_drivers();
 
-    let options: [(&str, &[&str]); 4] = [
-        ("Steam",                            &["steam"]),
-        ("Wine + Winetricks + Lutris",       &["wine", "winetricks", "lutris"]),
-        ("Gamemode (performance optimizer)", &["gamemode", "lib32-gamemode"]),
-        ("MangoHud (FPS overlay)",           &["mangohud", "lib32-mangohud"]),
-    ];
-    let names: Vec<&str> = options.iter().map(|(name, _)| *name).collect();
+    let names: Vec<&str> = EXTRAS.iter().map(|(name, _)| *name).collect();
 
     let selected = MultiSelect::new()
         .with_prompt("Select what you want to install")
@@ -83,7 +91,7 @@ pub fn run() {
         .unwrap();
 
     for &idx in &selected {
-        packages.extend(options[idx].1);
+        packages.extend(EXTRAS[idx].1);
     }
 
     if packages.is_empty() {

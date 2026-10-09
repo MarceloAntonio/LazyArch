@@ -1,6 +1,6 @@
 use std::fs;
 use std::path::Path;
-use std::process::{exit, Command};
+use std::process::{exit, Command, Stdio};
 
 use dialoguer::Confirm;
 
@@ -45,6 +45,25 @@ pub fn run(cmd: &str, args: &[&str]) {
 
 pub fn sudo(args: &[&str]) {
     run("sudo", args);
+}
+
+/// Runs a command silently and reports whether it succeeded. For checks only.
+pub fn succeeds(cmd: &str, args: &[&str]) -> bool {
+    Command::new(cmd)
+        .args(args)
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .is_ok_and(|s| s.success())
+}
+
+/// True only if every package is installed.
+pub fn is_installed(packages: &[&str]) -> bool {
+    succeeds("pacman", &[&["-Q"], packages].concat())
+}
+
+pub fn is_enabled(unit: &str) -> bool {
+    succeeds("systemctl", &["is-enabled", "--quiet", unit])
 }
 
 /// `--needed` skips what's already installed. No `--noconfirm`, so pacman

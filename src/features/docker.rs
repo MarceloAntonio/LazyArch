@@ -1,5 +1,9 @@
-use crate::system::{pacman_install, sudo};
+use crate::system::{is_enabled, is_installed, pacman_install, sudo};
 use crate::ui;
+
+pub fn done() -> bool {
+    is_installed(&["docker"]) && is_enabled("docker")
+}
 
 pub fn run() {
     pacman_install(&["docker", "docker-compose", "docker-buildx"]);

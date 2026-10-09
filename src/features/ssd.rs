@@ -1,5 +1,9 @@
-use crate::system::sudo;
+use crate::system::{is_enabled, sudo};
 use crate::ui;
+
+pub fn done() -> bool {
+    is_enabled("fstrim.timer")
+}
 
 pub fn run() {
     ui::info("Running TRIM...");

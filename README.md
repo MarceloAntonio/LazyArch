@@ -56,6 +56,7 @@ The project follows the **KISS (Keep It Simple, Stupid)** philosophy, aiming for
 - Gaming setup (Steam, Wine, Lutris, Gamemode, MangoHud)
 - Colored terminal output
 - Shows what pacman will install and asks before doing it
+- Detects what is already installed/configured (✓ in the menu) and asks before redoing it
 - Backs up `/etc/pacman.conf` before editing it
 - `--version` and `--help` CLI flags
 - Detects Arch and Arch-based distros automatically
@@ -151,7 +152,7 @@ src/
 
 ### Adding a feature
 
-1. Create `src/features/<name>.rs` with a `pub fn run()`.
+1. Create `src/features/<name>.rs` with a `pub fn run()` and a `pub fn done() -> bool` that checks the system.
 2. Add `pub mod <name>;` to `src/features/mod.rs`.
 3. Add one line to `FEATURES` in `src/menu.rs`. The menu entry, CLI flag and `--help` text come from it.
 

@@ -34,7 +34,7 @@ fn main() {
         }
         Some("--first-setup") => menu::first_setup(),
         Some(flag) => match menu::FEATURES.iter().find(|f| f.flag == flag) {
-            Some(f) => (f.run)(),
+            Some(f) => f.run_checked(),
             None => {
                 ui::error(&format!("Unknown option: {flag}"));
                 println!("Run 'lazy-arch --help' for usage.");

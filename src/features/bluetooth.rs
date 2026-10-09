@@ -1,6 +1,10 @@
 use dialoguer::Confirm;
-use crate::system::{pacman_install, sudo};
+use crate::system::{is_enabled, pacman_install, sudo};
 use crate::ui;
+
+pub fn done() -> bool {
+    is_enabled("bluetooth")
+}
 
 pub fn run() {
     let mut packages = vec!["bluez", "bluez-utils"];

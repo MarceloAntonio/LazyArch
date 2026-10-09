@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Added
+- Status checker: the menu marks finished features with ✓ and asks before running them again
+- First Setup starts with already done steps unchecked
+- Fonts and Languages pre-select what's already installed
+
 ### Changed
 - Failed commands are now reported and LazyArch asks whether to continue (they used to be ignored)
 - pacman shows what it will install and asks for confirmation (no more `--noconfirm`)

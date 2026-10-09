@@ -3,6 +3,10 @@ use crate::ui;
 
 const PATH: &str = "/etc/pacman.conf";
 
+pub fn done() -> bool {
+    std::fs::read_to_string(PATH).is_ok_and(|c| c.lines().any(|l| l == "ILoveCandy"))
+}
+
 pub fn run() {
     backup(PATH);
 

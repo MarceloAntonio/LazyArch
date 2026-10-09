@@ -4,19 +4,28 @@ use dialoguer::Select;
 use crate::system::{self, pacman_install};
 use crate::ui;
 
+const HELPERS: [&str; 2] = ["yay", "paru"];
+
+fn is_installed(helper: &str) -> bool {
+    Path::new("/usr/bin").join(helper).exists()
+}
+
+pub fn done() -> bool {
+    HELPERS.iter().any(|h| is_installed(h))
+}
+
 pub fn run() {
-    let helpers = ["yay", "paru"];
 
     let idx = Select::new()
         .with_prompt("Select an AUR helper")
-        .items(&helpers)
+        .items(&HELPERS)
         .default(0)
         .interact()
         .unwrap();
 
-    let helper = helpers[idx];
+    let helper = HELPERS[idx];
 
-    if Path::new("/usr/bin").join(helper).exists() {
+    if is_installed(helper) {
         ui::success(&format!("{helper} already installed, skipping..."));
         return;
     }

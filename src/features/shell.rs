@@ -2,6 +2,11 @@ use dialoguer::Select;
 use crate::system::{self, pacman_install};
 use crate::ui;
 
+/// Arch's default login shell is bash, anything else means it was changed.
+pub fn done() -> bool {
+    std::env::var("SHELL").is_ok_and(|s| !s.ends_with("/bash"))
+}
+
 pub fn run() {
     // (name, packages, path)
     let shells: [(&str, &[&str], &str); 6] = [
