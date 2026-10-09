@@ -3,6 +3,13 @@
 ## [Unreleased]
 
 ### Added
+- Menu grouped into category submenus
+- Audio (PipeWire), Time Sync (NTP), Printer (CUPS), Flatpak + Flathub, Common Apps
+- Laptop power management (power-profiles-daemon or TLP) and zram
+- Starship prompt and Zsh plugins in Change Shell
+- Virtualization (QEMU/KVM + virt-manager) and Windows VM (dockurr/windows + RDP)
+- DaVinci Resolve through the AUR helper
+- System Update (pacman, AUR, Flatpak), weekly mirror refresh and pacman cache cleanup timers
 - Status checker: the menu marks finished features with ✓ and asks before running them again
 - First Setup starts with already done steps unchecked
 - Fonts and Languages pre-select what's already installed
