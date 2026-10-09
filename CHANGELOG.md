@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.1.0] - 2026-10-09
 
 ### Added
 - Menu grouped into category submenus
