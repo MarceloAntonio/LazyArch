@@ -1,47 +1,20 @@
-use std::process::Command;
-use dialoguer::Select;
-use crate::system::pacman_install;
+use crate::system::{pacman_install, sudo};
 use crate::ui;
 
 pub fn run() {
     pacman_install(&["reflector"]);
 
-    let countries = vec![
-        "Brazil",
-        "United States",
-        "Germany",
-        "France",
-        "Japan",
-        "Australia",
-    ];
+    ui::info("Finding the fastest up-to-date mirrors...");
+    sudo(&[
+        "reflector",
+        "--latest", "20",
+        "--protocol", "https",
+        "--sort", "rate",
+        "--save", "/etc/pacman.d/mirrorlist",
+    ]);
 
-    let idx = Select::new()
-        .with_prompt("Select your country for mirror optimization")
-        .items(&countries)
-        .default(0)
-        .interact()
-        .unwrap();
-
-    let country = countries[idx];
-
-    ui::info(&format!("Updating mirrors for {}...", country));
-
-    Command::new("sudo")
-        .args([
-            "reflector",
-            "--country", country,
-            "--age", "12",
-            "--protocol", "https",
-            "--sort", "rate",
-            "--save", "/etc/pacman.d/mirrorlist",
-        ])
-        .status()
-        .expect("Failed to run reflector");
-
-    Command::new("sudo")
-        .args(["pacman", "-Sy"])
-        .status()
-        .expect("Failed to sync pacman");
+    // -Syu, never -Sy: a sync without upgrade is an unsupported partial upgrade.
+    sudo(&["pacman", "-Syu"]);
 
     ui::success("Mirrors updated!");
 }

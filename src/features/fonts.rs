@@ -29,11 +29,8 @@ pub fn run() {
         return;
     }
 
-    for idx in selected {
-        let (name, package) = fonts[idx];
-        ui::info(&format!("Installing {}...", name));
-        pacman_install(&[package]);
-    }
+    let packages: Vec<&str> = selected.iter().map(|&idx| fonts[idx].1).collect();
+    pacman_install(&packages);
 
     ui::success("Fonts installed!");
 }

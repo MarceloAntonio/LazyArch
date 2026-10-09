@@ -1,32 +1,25 @@
-use std::process::Command;
+use crate::system::{backup, sudo};
 use crate::ui;
 
+const PATH: &str = "/etc/pacman.conf";
+
 pub fn run() {
-    let path = "/etc/pacman.conf";
+    backup(PATH);
 
-    ui::info("Enabling Colors...");
-    Command::new("sudo")
-        .args(["sed", "-i", "s/#Color/Color/", path])
-        .status()
-        .expect("Failed to configure pacman");
+    ui::info("Enabling colors, parallel downloads and progress bar...");
+    sudo(&[
+        "sed", "-i",
+        "-e", "s/^#Color/Color/",
+        "-e", "s/^#ParallelDownloads/ParallelDownloads/",
+        "-e", "s/^NoProgressBar/#NoProgressBar/",
+        PATH,
+    ]);
 
-    ui::info("Enabling parallel downloads...");
-    Command::new("sudo")
-        .args(["sed", "-i", "s/#ParallelDownloads = 5/ParallelDownloads = 5/", path])
-        .status()
-        .expect("Failed to configure pacman");
-
-    ui::info("Enabling progress bar...");
-    Command::new("sudo")
-        .args(["sed", "-i", "s/^NoProgressBar/#NoProgressBar/", path])
-        .status()
-        .expect("Failed to configure pacman");
-
-    ui::info("Adding ILoveCandy...");
-    Command::new("sudo")
-        .args(["sed", "-i", "/^Color$/a ILoveCandy", path])
-        .status()
-        .expect("Failed to configure pacman");
+    let content = std::fs::read_to_string(PATH).expect("Failed to read pacman.conf");
+    if !content.contains("ILoveCandy") {
+        ui::info("Adding ILoveCandy...");
+        sudo(&["sed", "-i", "/^Color$/a ILoveCandy", PATH]);
+    }
 
     ui::success("Pacman configured!");
 }

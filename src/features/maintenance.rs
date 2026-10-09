@@ -1,6 +1,6 @@
 use std::process::Command;
 use dialoguer::MultiSelect;
-use crate::system::pacman_install;
+use crate::system::{self, pacman_install, sudo};
 use crate::ui;
 
 fn remove_orphans() {
@@ -21,11 +21,7 @@ fn remove_orphans() {
 
     ui::info(&format!("Found {} orphan(s): {}", orphan_list.len(), orphan_list.join(", ")));
 
-    Command::new("sudo")
-        .args(["pacman", "-Rns", "--noconfirm"])
-        .args(&orphan_list)
-        .status()
-        .expect("Failed to remove orphaned packages");
+    sudo(&[&["pacman", "-Rns"], orphan_list.as_slice()].concat());
 
     ui::success("Orphaned packages removed!");
 }
@@ -34,49 +30,31 @@ fn clean_pacman_cache() {
     pacman_install(&["pacman-contrib"]);
 
     ui::info("Cleaning package cache (keeping last 3 versions)...");
-    Command::new("sudo")
-        .args(["paccache", "-r"])
-        .status()
-        .expect("Failed to run paccache");
+    sudo(&["paccache", "-r"]);
 
     ui::info("Removing cache of uninstalled packages...");
-    Command::new("sudo")
-        .args(["paccache", "-ruk0"])
-        .status()
-        .expect("Failed to run paccache");
+    sudo(&["paccache", "-ruk0"]);
 
     ui::success("Pacman cache cleaned!");
 }
 
 fn clean_journal_logs() {
     ui::info("Current journal disk usage:");
-    Command::new("journalctl")
-        .args(["--disk-usage"])
-        .status()
-        .expect("Failed to check journal size");
+    system::run("journalctl", &["--disk-usage"]);
 
     ui::info("Cleaning logs older than 2 weeks...");
-    Command::new("sudo")
-        .args(["journalctl", "--vacuum-time=2weeks"])
-        .status()
-        .expect("Failed to clean journal logs");
+    sudo(&["journalctl", "--vacuum-time=2weeks"]);
 
     ui::success("Journal logs cleaned!");
 }
 
 fn check_failed_services() {
     ui::info("Checking for failed systemd services...\n");
-    Command::new("systemctl")
-        .args(["--failed"])
-        .status()
-        .expect("Failed to check services");
+    system::run("systemctl", &["--failed"]);
 
     println!();
     ui::info("Recent critical errors (current boot):\n");
-    Command::new("journalctl")
-        .args(["-p", "3", "-xb", "--no-pager"])
-        .status()
-        .expect("Failed to read journal errors");
+    system::run("journalctl", &["-p", "3", "-xb", "--no-pager"]);
 }
 
 pub fn run() {

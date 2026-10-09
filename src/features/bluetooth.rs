@@ -1,6 +1,5 @@
-use std::process::Command;
 use dialoguer::Confirm;
-use crate::system::pacman_install;
+use crate::system::{pacman_install, sudo};
 use crate::ui;
 
 pub fn run() {
@@ -27,11 +26,7 @@ pub fn run() {
     }
 
     pacman_install(&packages);
-
-    Command::new("sudo")
-        .args(["systemctl", "enable", "--now", "bluetooth"])
-        .status()
-        .expect("Failed to enable bluetooth service");
+    sudo(&["systemctl", "enable", "--now", "bluetooth"]);
 
     ui::success("Bluetooth installed!");
 }

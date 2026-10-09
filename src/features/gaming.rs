@@ -1,134 +1,97 @@
 use std::process::Command;
 use dialoguer::MultiSelect;
-use crate::system::pacman_install;
+use crate::system::{backup, pacman_install, sudo};
 use crate::ui;
 
-enum GpuVendor {
-    Intel,
-    Amd,
-    Nvidia,
-    Unknown,
-}
-
-fn detect_gpu() -> GpuVendor {
-    let output = Command::new("lspci")
-        .output()
-        .expect("Failed to run lspci");
-
-    let text = String::from_utf8_lossy(&output.stdout).to_lowercase();
-
-    for line in text.lines() {
-        if line.contains("vga") || line.contains("3d controller") || line.contains("display") {
-            if line.contains("nvidia") { return GpuVendor::Nvidia; }
-            if line.contains("amd") || line.contains("radeon") || line.contains("advanced micro") { return GpuVendor::Amd; }
-            if line.contains("intel") { return GpuVendor::Intel; }
-        }
-    }
-
-    GpuVendor::Unknown
-}
+const PACMAN_CONF: &str = "/etc/pacman.conf";
 
 fn enable_multilib() {
-    let content = std::fs::read_to_string("/etc/pacman.conf")
-        .expect("Failed to read pacman.conf");
+    let content = std::fs::read_to_string(PACMAN_CONF).expect("Failed to read pacman.conf");
 
     if !content.contains("#[multilib]") {
         ui::success("Multilib already enabled, skipping...");
         return;
     }
 
+    backup(PACMAN_CONF);
     ui::info("Enabling multilib...");
-
-    Command::new("sudo")
-        .args(["sed", "-i", "s/^#\\[multilib\\]/[multilib]/", "/etc/pacman.conf"])
-        .status()
-        .expect("Failed to uncomment [multilib]");
-
-    Command::new("sudo")
-        .args(["sed", "-i", "/^\\[multilib\\]/{n;s/^#//}", "/etc/pacman.conf"])
-        .status()
-        .expect("Failed to uncomment multilib Include");
-
-    Command::new("sudo")
-        .args(["pacman", "-Sy"])
-        .status()
-        .expect("Failed to sync pacman");
+    // Uncomment [multilib] and the Include line right below it.
+    sudo(&["sed", "-i", "-e", "s/^#\\[multilib\\]/[multilib]/", "-e", "/^\\[multilib\\]/{n;s/^#//}", PACMAN_CONF]);
+    sudo(&["pacman", "-Syu"]);
 
     ui::success("Multilib enabled!");
 }
 
-fn install_gpu_drivers() {
+/// Driver packages for every GPU found, so hybrid laptops (Intel/AMD + NVIDIA) get both.
+fn gpu_drivers() -> Vec<&'static str> {
+    pacman_install(&["pciutils"]);
     ui::info("Detecting GPU...");
 
-    match detect_gpu() {
-        GpuVendor::Intel => {
-            println!("  🔵 Intel GPU detected");
-            pacman_install(&["xf86-video-intel", "mesa", "vulkan-intel", "lib32-mesa", "lib32-vulkan-intel"]);
-        }
-        GpuVendor::Amd => {
-            println!("  🔴 AMD GPU detected");
-            pacman_install(&["xf86-video-amdgpu", "mesa", "vulkan-radeon", "lib32-mesa", "lib32-vulkan-radeon"]);
-        }
-        GpuVendor::Nvidia => {
-            println!("  🟢 NVIDIA GPU detected");
-            pacman_install(&["nvidia", "nvidia-utils", "nvidia-settings", "lib32-nvidia-utils"]);
-        }
-        GpuVendor::Unknown => {
-            ui::warn("Could not detect GPU. Install drivers manually.");
-            return;
-        }
+    let output = Command::new("lspci").output().expect("Failed to run lspci");
+    let text = String::from_utf8_lossy(&output.stdout).to_lowercase();
+    let gpus: Vec<&str> = text
+        .lines()
+        .filter(|l| l.contains("vga") || l.contains("3d controller") || l.contains("display"))
+        .collect();
+    let has = |names: &[&str]| gpus.iter().any(|l| names.iter().any(|n| l.contains(n)));
+
+    let mut packages = vec![];
+    if has(&["intel"]) {
+        println!("  🔵 Intel GPU detected");
+        packages.extend(["mesa", "vulkan-intel", "lib32-mesa", "lib32-vulkan-intel"]);
+    }
+    if has(&["amd", "radeon", "advanced micro"]) {
+        println!("  🔴 AMD GPU detected");
+        packages.extend(["xf86-video-amdgpu", "mesa", "vulkan-radeon", "lib32-mesa", "lib32-vulkan-radeon"]);
+    }
+    if has(&["nvidia"]) {
+        println!("  🟢 NVIDIA GPU detected");
+        // ponytail: nvidia-open covers Turing (GTX 16xx/RTX 20xx) and newer on the stock kernel;
+        // add nvidia-open-dkms for linux-lts/zen and AUR legacy drivers for older cards if users ask.
+        packages.extend(["nvidia-open", "nvidia-utils", "nvidia-settings", "lib32-nvidia-utils"]);
     }
 
-    ui::success("GPU drivers installed!");
+    if packages.is_empty() {
+        ui::warn("Could not detect GPU. Install drivers manually.");
+    }
+
+    packages.sort_unstable();
+    packages.dedup();
+    packages
 }
 
 pub fn run() {
     println!("\n🎮 Gaming Setup\n");
 
-    install_gpu_drivers();
+    // Multilib first: the lib32-* driver packages live there.
     enable_multilib();
+    let mut packages = gpu_drivers();
 
-    let options = vec![
-        "Steam",
-        "Wine + Winetricks + Lutris",
-        "Gamemode (performance optimizer)",
-        "MangoHud (FPS overlay)",
+    let options: [(&str, &[&str]); 4] = [
+        ("Steam",                            &["steam"]),
+        ("Wine + Winetricks + Lutris",       &["wine", "winetricks", "lutris"]),
+        ("Gamemode (performance optimizer)", &["gamemode", "lib32-gamemode"]),
+        ("MangoHud (FPS overlay)",           &["mangohud", "lib32-mangohud"]),
     ];
+    let names: Vec<&str> = options.iter().map(|(name, _)| *name).collect();
 
     let selected = MultiSelect::new()
         .with_prompt("Select what you want to install")
-        .items(&options)
-        .defaults(&[true, true, true, true])
+        .items(&names)
+        .defaults(&[true; 4])
         .interact()
         .unwrap();
 
-    if selected.is_empty() {
-        println!("Nothing selected, skipping...");
+    for &idx in &selected {
+        packages.extend(options[idx].1);
+    }
+
+    if packages.is_empty() {
+        println!("Nothing to install, skipping...");
         return;
     }
 
-    for idx in &selected {
-        match idx {
-            0 => {
-                ui::info("Installing Steam...");
-                pacman_install(&["steam"]);
-            }
-            1 => {
-                ui::info("Installing Wine + Lutris...");
-                pacman_install(&["wine", "winetricks", "lutris"]);
-            }
-            2 => {
-                ui::info("Installing Gamemode...");
-                pacman_install(&["gamemode", "lib32-gamemode"]);
-            }
-            3 => {
-                ui::info("Installing MangoHud...");
-                pacman_install(&["mangohud", "lib32-mangohud"]);
-            }
-            _ => {}
-        }
-    }
-
+    pacman_install(&packages);
     ui::success("Gaming setup complete!");
 
     if selected.contains(&0) {

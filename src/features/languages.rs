@@ -8,7 +8,7 @@ pub fn run() {
         ("Go",      vec!["go"]),
         ("Python",  vec!["python", "python-pip", "python-virtualenv"]),
         ("Java",    vec!["jdk-openjdk", "maven"]),
-        ("Rust",    vec!["rust", "cargo"]),
+        ("Rust",    vec!["rust"]),
         ("PHP",     vec!["php", "php-fpm", "composer"]),
         ("C/C++",   vec!["gcc", "gdb", "cmake", "make", "clang"]),
         ("Ruby",    vec!["ruby"]),
@@ -31,11 +31,8 @@ pub fn run() {
         return;
     }
 
-    for idx in selected {
-        let (name, packages) = &languages[idx];
-        ui::info(&format!("Installing {}...", name));
-        pacman_install(packages);
-    }
+    let packages: Vec<&str> = selected.iter().flat_map(|&idx| languages[idx].1.iter().copied()).collect();
+    pacman_install(&packages);
 
     ui::success("Languages installed!");
 }
