@@ -94,7 +94,7 @@ pub fn pacman_install(packages: &[&str]) {
 /// Copies `path` to `path.bak` once, so the original config is never lost.
 pub fn backup(path: &str) {
     let bak = format!("{path}.bak");
-    if !Path::new(&bak).exists() {
+    if Path::new(path).exists() && !Path::new(&bak).exists() {
         ui::info(&format!("Backing up {path} to {bak}..."));
         sudo(&["cp", path, &bak]);
     }

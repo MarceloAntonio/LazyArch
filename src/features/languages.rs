@@ -1,5 +1,4 @@
-use dialoguer::MultiSelect;
-use crate::system::{is_installed, pacman_install};
+use crate::system::pacman_install;
 use crate::ui;
 
 const LANGUAGES: [(&str, &[&str]); 12] = [
@@ -18,27 +17,11 @@ const LANGUAGES: [(&str, &[&str]); 12] = [
 ];
 
 pub fn run() {
-    let installed: Vec<bool> = LANGUAGES.iter().map(|(_, packages)| is_installed(packages)).collect();
-    let names: Vec<String> = LANGUAGES
-        .iter()
-        .zip(&installed)
-        .map(|((name, _), &inst)| if inst { format!("{name} (installed)") } else { name.to_string() })
-        .collect();
-
-    let selected = MultiSelect::new()
-        .with_prompt("Select languages to install")
-        .items(&names)
-        .defaults(&installed)
-        .interact()
-        .unwrap();
-
-    if selected.is_empty() {
-        println!("Nothing selected, skipping...");
+    let packages = ui::pick_packages("Select languages to install", &LANGUAGES);
+    if packages.is_empty() {
         return;
     }
 
-    let packages: Vec<&str> = selected.iter().flat_map(|&idx| LANGUAGES[idx].1.iter().copied()).collect();
     pacman_install(&packages);
-
     ui::success("Languages installed!");
 }

@@ -1,3 +1,4 @@
+pub mod apps;
 pub mod audio;
 pub mod aur;
 pub mod bluetooth;
@@ -10,8 +11,11 @@ pub mod languages;
 pub mod maintenance;
 pub mod mirrors;
 pub mod pacman_config;
+pub mod power;
 pub mod printer;
 pub mod shell;
 pub mod ssd;
 pub mod time_sync;
 pub mod update;
+pub mod virtualization;
+pub mod zram;
