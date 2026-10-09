@@ -1,6 +1,6 @@
 use std::process::Command;
 use dialoguer::MultiSelect;
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
 enum GpuVendor {
@@ -82,7 +82,7 @@ fn install_gpu_drivers() {
     ui::success("GPU drivers installed!");
 }
 
-pub fn gaming_setup() {
+pub fn run() {
     println!("\n🎮 Gaming Setup\n");
 
     install_gpu_drivers();

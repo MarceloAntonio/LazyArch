@@ -1,8 +1,8 @@
 use std::process::Command;
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
-pub fn install_aur() {
+pub fn run() {
     let install_dir = "/tmp/yay";
 
     ui::info("Installing dependencies...");

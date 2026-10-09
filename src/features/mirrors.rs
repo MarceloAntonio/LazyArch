@@ -1,9 +1,9 @@
 use std::process::Command;
 use dialoguer::Select;
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
-pub fn update_mirrors() {
+pub fn run() {
     pacman_install(&["reflector"]);
 
     let countries = vec![

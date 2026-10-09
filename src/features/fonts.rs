@@ -1,8 +1,8 @@
 use dialoguer::MultiSelect;
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
-pub fn fonts_installer() {
+pub fn run() {
     let fonts: Vec<(&str, &str)> = vec![
         ("JetBrains Mono", "ttf-jetbrains-mono-nerd"),
         ("Fira Code",      "ttf-firacode-nerd"),

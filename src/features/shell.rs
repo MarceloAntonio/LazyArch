@@ -1,6 +1,6 @@
 use std::process::Command;
 use dialoguer::Select;
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
 fn set_shell(shell: &str, shell_path: &str) {
@@ -12,7 +12,7 @@ fn set_shell(shell: &str, shell_path: &str) {
     ui::success("Shell changed! Restart or log back in to apply.");
 }
 
-pub fn change_shell() {
+pub fn run() {
     let choices = vec!["Bash", "Zsh", "Fish", "Nushell", "Elvish", "Tcsh", "Back"];
 
     let selection = Select::new()

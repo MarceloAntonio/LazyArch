@@ -1,8 +1,8 @@
 use dialoguer::MultiSelect;
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
-pub fn language_installer() {
+pub fn run() {
     let languages: Vec<(&str, Vec<&str>)> = vec![
         ("Node.js", vec!["nodejs", "npm"]),
         ("Go",      vec!["go"]),

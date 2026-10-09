@@ -1,7 +1,7 @@
 use std::process::Command;
 use crate::ui;
 
-pub fn pacman_cfg() {
+pub fn run() {
     let path = "/etc/pacman.conf";
 
     ui::info("Enabling Colors...");

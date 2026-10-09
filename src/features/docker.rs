@@ -1,8 +1,8 @@
 use std::process::Command;
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
-pub fn install_docker() {
+pub fn run() {
     pacman_install(&["docker", "docker-compose", "docker-buildx"]);
 
     Command::new("sudo")

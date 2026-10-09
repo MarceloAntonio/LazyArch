@@ -1,7 +1,5 @@
 use colored::Colorize;
 
-const VERSION: &str = env!("CARGO_PKG_VERSION");
-
 pub fn banner() {
     let art = r#"
   _                       _             _     
@@ -12,7 +10,7 @@ pub fn banner() {
                   |___/                         
 "#;
     println!("{}", art.bold().cyan());
-    println!("  {} {}\n", "v".dimmed(), VERSION.dimmed());
+    println!("  {} {}\n", "v".dimmed(), crate::VERSION.dimmed());
 }
 
 pub fn success(msg: &str) {

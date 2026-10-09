@@ -1,9 +1,9 @@
 use std::process::Command;
 use dialoguer::Confirm;
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
-pub fn bluetooth_setup() {
+pub fn run() {
     let mut packages = vec!["bluez", "bluez-utils"];
 
     let gui = Confirm::new()

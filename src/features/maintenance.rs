@@ -1,6 +1,6 @@
 use std::process::Command;
 use dialoguer::MultiSelect;
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
 fn remove_orphans() {
@@ -79,7 +79,7 @@ fn check_failed_services() {
         .expect("Failed to read journal errors");
 }
 
-pub fn maintenance_menu() {
+pub fn run() {
     let options = vec![
         "Remove Orphaned Packages",
         "Clean Pacman Cache",

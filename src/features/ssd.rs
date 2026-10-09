@@ -1,7 +1,7 @@
 use std::process::Command;
 use crate::ui;
 
-pub fn ssd_setup() {
+pub fn run() {
     ui::info("Running TRIM...");
     Command::new("sudo")
         .args(["fstrim", "-av"])

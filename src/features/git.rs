@@ -1,9 +1,9 @@
 use std::process::Command;
 use dialoguer::{Confirm, Input};
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
-pub fn git_setup() {
+pub fn run() {
     ui::info("Git Configuration\n");
 
     pacman_install(&["git"]);

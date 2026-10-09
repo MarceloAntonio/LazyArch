@@ -7,6 +7,6 @@ pub mod git;
 pub mod languages;
 pub mod maintenance;
 pub mod mirrors;
-pub mod pacman;
+pub mod pacman_config;
 pub mod shell;
 pub mod ssd;
