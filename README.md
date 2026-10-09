@@ -1,4 +1,5 @@
 # LazyArch
+![Release](https://img.shields.io/github/v/release/MarceloAntonio/LazyArch)
 ![License](https://img.shields.io/github/license/MarceloAntonio/LazyArch)
 ![Last Commit](https://img.shields.io/github/last-commit/MarceloAntonio/LazyArch)
 ![Repo Size](https://img.shields.io/github/repo-size/MarceloAntonio/LazyArch)
@@ -21,6 +22,17 @@ The project follows the **KISS (Keep It Simple, Stupid)** philosophy, aiming for
 
 > Previously written in Python, LazyArch has been fully rewritten in **Rust** — delivering a single native binary with no runtime dependencies.
 > You can view the old repository by clicking [here](https://github.com/MarceloAntonio/LazyArch_old).
+
+---
+
+## What's new in v1.1.0
+
+- Menu grouped into categories, with ✓ on what's already installed/configured
+- New: Audio, Time Sync, Printer, Flatpak, Common Apps, laptop power, zram, Starship prompt, Virtualization, Windows VM (Docker + RDP), DaVinci Resolve and System Update
+- Failed commands are reported instead of ignored, and pacman shows what it will install before doing it
+- Removed: Firewall, Desktop/WM installer, LazyVim and Proton-GE
+
+Full list in the [CHANGELOG](CHANGELOG.md).
 
 ---
 
