@@ -1,13 +1,10 @@
 pub mod aur;
 pub mod bluetooth;
-pub mod desktop;
 pub mod docker;
-pub mod firewall;
 pub mod fonts;
 pub mod gaming;
 pub mod git;
 pub mod languages;
-pub mod lazyvim;
 pub mod maintenance;
 pub mod mirrors;
 pub mod pacman;

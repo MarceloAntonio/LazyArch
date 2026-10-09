@@ -3,14 +3,11 @@ use dialoguer::{MultiSelect, Select};
 use crate::features::{
     aur::install_aur,
     bluetooth::bluetooth_setup,
-    desktop::desktop_installer,
     docker::install_docker,
-    firewall::firewall_setup,
     fonts::fonts_installer,
     gaming::gaming_setup,
     git::git_setup,
     languages::language_installer,
-    lazyvim::install_lazy_vim,
     maintenance::maintenance_menu,
     mirrors::update_mirrors,
     pacman::pacman_cfg,
@@ -28,12 +25,9 @@ pub fn first_setup() {
         ("GPU Drivers/Gaming",   gaming_setup),
         ("Bluetooth Setup",      bluetooth_setup),
         ("SSD Trim",             ssd_setup),
-        ("Desktop/WM Installer", desktop_installer),
         ("Install Nerd Fonts",   fonts_installer),
         ("Change Shell",         change_shell),
-        ("Install LazyVim",      install_lazy_vim),
         ("Git Setup",            git_setup),
-        ("Firewall",             firewall_setup),
     ];
 
     let names: Vec<&str> = steps.iter().map(|(name, _)| *name).collect();
@@ -78,16 +72,12 @@ pub fn main_menu() {
             "Bluetooth Setup",
             "SSD Trim Activation",
             // Desktop
-            "Desktop/WM Installer",
             "Install Nerd Fonts",
             "Change Shell",
             // Dev
-            "Install LazyVim",
             "Language Installer",
             "Docker Setup",
             "Git Setup",
-            // Security
-            "Firewall Activation",
             // Maintenance
             "System Maintenance",
 
@@ -111,16 +101,13 @@ pub fn main_menu() {
             "Bluetooth Setup"          => bluetooth_setup(),
             "SSD Trim Activation"      => ssd_setup(),
 
-            "Desktop/WM Installer"     => desktop_installer(),
             "Install Nerd Fonts"       => fonts_installer(),
             "Change Shell"             => change_shell(),
 
-            "Install LazyVim"          => install_lazy_vim(),
             "Language Installer"       => language_installer(),
             "Docker Setup"             => install_docker(),
             "Git Setup"                => git_setup(),
 
-            "Firewall Activation"      => firewall_setup(),
 
             "System Maintenance"       => maintenance_menu(),
 

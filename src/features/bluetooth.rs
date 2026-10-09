@@ -1,7 +1,6 @@
 use std::process::Command;
 use dialoguer::Confirm;
 use crate::system::pacman::pacman_install;
-use crate::system::is_systemd_running::is_systemd_running;
 use crate::ui;
 
 pub fn bluetooth_setup() {
@@ -29,15 +28,10 @@ pub fn bluetooth_setup() {
 
     pacman_install(&packages);
 
-    if is_systemd_running() {
-        Command::new("sudo")
-            .args(["systemctl", "enable", "--now", "bluetooth"])
-            .status()
-            .expect("Failed to enable bluetooth service");
-    } else {
-        ui::warn("Systemd not running, skipping service enable.");
-        println!("  Run manually: sudo systemctl enable --now bluetooth");
-    }
+    Command::new("sudo")
+        .args(["systemctl", "enable", "--now", "bluetooth"])
+        .status()
+        .expect("Failed to enable bluetooth service");
 
     ui::success("Bluetooth installed!");
 }
