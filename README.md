@@ -28,27 +28,22 @@ The project follows the **KISS (Keep It Simple, Stupid)** philosophy, aiming for
 
 ### Base System
 - Pacman configuration (colors, parallel downloads, ILoveCandy)
-- Mirror optimization via reflector (per-country)
-- Install AUR helpers (yay)
+- Mirror optimization via reflector (fastest up-to-date mirrors)
+- Install an AUR helper (yay or paru)
 
 ### Hardware
-- GPU driver auto-detection and installation (Intel, AMD, NVIDIA)
+- GPU driver auto-detection and installation (Intel, AMD, NVIDIA, hybrid laptops)
 - Bluetooth setup with optional GUI (Blueman) and PipeWire support
 - SSD TRIM activation with automatic weekly timer
 
 ### Desktop
-- Desktop Environment / Window Manager installer (i3, Hyprland, bspwm, GNOME, KDE Plasma)
 - Nerd Fonts installer (JetBrains Mono, Fira Code, Hack, Iosevka, Cascadia Code)
-- Shell switcher (Bash, Zsh, Fish)
+- Shell switcher (Bash, Zsh, Fish, Nushell, Elvish, Tcsh)
 
 ### Development
-- LazyVim installation with optional Catppuccin theme
-- Programming language installer (Node.js, Go, Python, Java, Rust, PHP, C/C++)
+- Programming language installer (Node.js, Go, Python, Java, Rust, PHP, C/C++, Ruby, Elixir, Zig, Lua, .NET)
 - Docker + Docker Compose + Buildx setup
 - Git configuration with SSH key generation (ed25519)
-
-### Security
-- UFW firewall with profile presets (Personal, Developer, Custom)
 
 ### Maintenance
 - Remove orphaned packages
@@ -58,8 +53,10 @@ The project follows the **KISS (Keep It Simple, Stupid)** philosophy, aiming for
 
 ### Other
 - Full **First Setup** wizard (runs all tasks in sequence)
-- Gaming setup (Steam, Wine, Lutris, Gamemode, MangoHud, Proton-GE)
+- Gaming setup (Steam, Wine, Lutris, Gamemode, MangoHud)
 - Colored terminal output
+- Shows what pacman will install and asks before doing it
+- Backs up `/etc/pacman.conf` before editing it
 - `--version` and `--help` CLI flags
 - Detects Arch and Arch-based distros automatically
 
@@ -80,18 +77,10 @@ The project follows the **KISS (Keep It Simple, Stupid)** philosophy, aiming for
 Downloads the pre-compiled binary directly from GitHub Releases — no Rust or compilation needed.
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/MarceloAntonio/LazyArch/refs/heads/main/Install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/MarceloAntonio/LazyArch/refs/heads/main/Install.sh | bash
 ```
 
-### Option 2: AUR (via PKGBUILD)
-
-```bash
-git clone https://github.com/MarceloAntonio/LazyArch
-cd LazyArch
-makepkg -si --noconfirm
-```
-
-### Option 3: Build from source
+### Option 2: Build from source
 
 Requires Rust installed on your machine.
 
@@ -115,43 +104,25 @@ lazy-arch            # Start the interactive menu
 You can also bypass the menu and run specific setup modules directly using CLI arguments:
 
 ```text
-Usage: lazy-arch [OPTIONS]
+Usage: lazy-arch [OPTION]
 
 Options:
   -v, --version       Show version
   -h, --help          Show this help
   --first-setup       Run the first setup wizard
-  --pacman            Configure Pacman
+  --pacman            Pacman Configuration
   --mirrors           Update Mirrors
-  --aur               Install AUR helper
-  --gaming            GPU Drivers & Gaming Setup
+  --aur               Install AUR Helper
+  --gaming            GPU Drivers/Gaming Setup
   --bluetooth         Bluetooth Setup
   --ssd               SSD Trim Activation
-  --desktop           Desktop/WM Installer
   --fonts             Install Nerd Fonts
   --shell             Change Shell
-  --lazyvim           Install LazyVim
   --languages         Language Installer
   --docker            Docker Setup
   --git               Git Setup
-  --firewall          Firewall Setup
   --maintenance       System Maintenance
 ```
-
----
-
-## Running with Docker (for testing)
-
-If you want to test without touching your system:
-
-```bash
-# Build and enter the container
-docker compose up -d && docker compose exec rust-dev bash
-
-# Inside the container
-lazy-arch
-```
-> Default password: `dev`
 
 ---
 
@@ -159,41 +130,39 @@ lazy-arch
 
 ```
 src/
-├── main.rs
-├── ui.rs
-├── menu/
-│   ├── mod.rs
-│   └── menu.rs
-├── features/
-│   ├── mod.rs
-│   ├── aur.rs
-│   ├── bluetooth.rs
-│   ├── desktop.rs
-│   ├── docker.rs
-│   ├── firewall.rs
-│   ├── fonts.rs
-│   ├── gaming.rs
-│   ├── git.rs
-│   ├── languages.rs
-│   ├── lazyvim.rs
-│   ├── maintenance.rs
-│   ├── mirrors.rs
-│   ├── pacman.rs
-│   ├── shell.rs
-│   └── ssd.rs
-└── system/
-    ├── mod.rs
-    ├── is_arch.rs
-    ├── is_systemd_running.rs
-    └── pacman.rs
+├── main.rs        # entry point, checks, CLI flags
+├── ui.rs          # colored output helpers
+├── menu.rs        # FEATURES table: menu, flags, --help, First Setup
+├── system.rs      # run/sudo, pacman_install, backup, Arch detection
+└── features/      # one file per feature, each exposes `pub fn run()`
+    ├── aur.rs
+    ├── bluetooth.rs
+    ├── docker.rs
+    ├── fonts.rs
+    ├── gaming.rs
+    ├── git.rs
+    ├── languages.rs
+    ├── maintenance.rs
+    ├── mirrors.rs
+    ├── pacman_config.rs
+    ├── shell.rs
+    └── ssd.rs
 ```
+
+### Adding a feature
+
+1. Create `src/features/<name>.rs` with a `pub fn run()`.
+2. Add `pub mod <name>;` to `src/features/mod.rs`.
+3. Add one line to `FEATURES` in `src/menu.rs`. The menu entry, CLI flag and `--help` text come from it.
+
+Use `system::pacman_install` and `system::sudo`/`system::run` instead of `std::process::Command`, so failures are reported and the user can choose to continue.
 
 ---
 
 ## Uninstall
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/MarceloAntonio/LazyArch/refs/heads/main/Uninstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/MarceloAntonio/LazyArch/refs/heads/main/Uninstall.sh | bash
 ```
 ---
 
