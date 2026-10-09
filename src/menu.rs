@@ -59,10 +59,12 @@ pub const FEATURES: &[Feature] = &[
     Feature { category: DESKTOP,     flag: "--shell",       name: "Change Shell",             run: shell::run,         done: shell::done,      first_setup: true },
     Feature { category: DESKTOP,     flag: "--flatpak",     name: "Flatpak + Flathub",        run: flatpak::run,       done: flatpak::done,    first_setup: false },
     Feature { category: DESKTOP,     flag: "--apps",        name: "Common Apps",              run: apps::run,          done: || false,         first_setup: false },
+    Feature { category: DESKTOP,     flag: "--davinci",     name: "DaVinci Resolve (AUR)",    run: davinci::run,       done: davinci::done,    first_setup: false },
     Feature { category: DEV,         flag: "--languages",   name: "Language Installer",       run: languages::run,     done: || false,         first_setup: false },
     Feature { category: DEV,         flag: "--docker",      name: "Docker Setup",             run: docker::run,        done: docker::done,     first_setup: false },
     Feature { category: DEV,         flag: "--git",         name: "Git Setup",                run: git::run,           done: git::done,        first_setup: true },
     Feature { category: DEV,         flag: "--virtualization", name: "Virtualization (QEMU/KVM)", run: virtualization::run, done: virtualization::done, first_setup: false },
+    Feature { category: DEV,         flag: "--windows",     name: "Windows VM (Docker + RDP)", run: windows::run,      done: windows::done,    first_setup: false },
     Feature { category: MAINTENANCE, flag: "--update",      name: "System Update",            run: update::run,        done: || false,         first_setup: false },
     Feature { category: MAINTENANCE, flag: "--maintenance", name: "System Maintenance",       run: maintenance::run,   done: || false,         first_setup: false },
 ];

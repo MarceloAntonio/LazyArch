@@ -1,6 +1,5 @@
-use std::process::Command;
 use dialoguer::MultiSelect;
-use crate::system::{backup, is_installed, pacman_install, sudo};
+use crate::system::{backup, detect_gpus, is_installed, pacman_install, sudo};
 use crate::ui;
 
 const PACMAN_CONF: &str = "/etc/pacman.conf";
@@ -36,29 +35,21 @@ fn enable_multilib() {
     ui::success("Multilib enabled!");
 }
 
-/// Driver packages for every GPU found, so hybrid laptops (Intel/AMD + NVIDIA) get both.
+/// Driver packages for every GPU found, so hybrid laptops get both.
 fn gpu_drivers() -> Vec<&'static str> {
-    pacman_install(&["pciutils"]);
     ui::info("Detecting GPU...");
-
-    let output = Command::new("lspci").output().expect("Failed to run lspci");
-    let text = String::from_utf8_lossy(&output.stdout).to_lowercase();
-    let gpus: Vec<&str> = text
-        .lines()
-        .filter(|l| l.contains("vga") || l.contains("3d controller") || l.contains("display"))
-        .collect();
-    let has = |names: &[&str]| gpus.iter().any(|l| names.iter().any(|n| l.contains(n)));
+    let gpus = detect_gpus();
 
     let mut packages = vec![];
-    if has(&["intel"]) {
+    if gpus.intel {
         println!("  🔵 Intel GPU detected");
         packages.extend(["mesa", "vulkan-intel", "lib32-mesa", "lib32-vulkan-intel"]);
     }
-    if has(&["amd", "radeon", "advanced micro"]) {
+    if gpus.amd {
         println!("  🔴 AMD GPU detected");
         packages.extend(["xf86-video-amdgpu", "mesa", "vulkan-radeon", "lib32-mesa", "lib32-vulkan-radeon"]);
     }
-    if has(&["nvidia"]) {
+    if gpus.nvidia {
         println!("  🟢 NVIDIA GPU detected");
         // ponytail: nvidia-open covers Turing (GTX 16xx/RTX 20xx) and newer on the stock kernel;
         // add nvidia-open-dkms for linux-lts/zen and AUR legacy drivers for older cards if users ask.

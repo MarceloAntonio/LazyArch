@@ -99,3 +99,28 @@ pub fn backup(path: &str) {
         sudo(&["cp", path, &bak]);
     }
 }
+
+pub struct Gpus {
+    pub intel: bool,
+    pub amd: bool,
+    pub nvidia: bool,
+}
+
+/// Every GPU vendor present, so hybrid laptops (Intel/AMD + NVIDIA) report both.
+pub fn detect_gpus() -> Gpus {
+    pacman_install(&["pciutils"]);
+
+    let output = Command::new("lspci").output().expect("Failed to run lspci");
+    let text = String::from_utf8_lossy(&output.stdout).to_lowercase();
+    let gpus: Vec<&str> = text
+        .lines()
+        .filter(|l| l.contains("vga") || l.contains("3d controller") || l.contains("display"))
+        .collect();
+    let has = |names: &[&str]| gpus.iter().any(|l| names.iter().any(|n| l.contains(n)));
+
+    Gpus {
+        intel: has(&["intel"]),
+        amd: has(&["amd", "radeon", "advanced micro"]),
+        nvidia: has(&["nvidia"]),
+    }
+}
