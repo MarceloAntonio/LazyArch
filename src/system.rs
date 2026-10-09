@@ -1,6 +1,7 @@
 use std::fs;
+use std::io::{self, Write};
 use std::path::Path;
-use std::process::{exit, Command, Stdio};
+use std::process::{exit, Command, ExitStatus, Stdio};
 
 use dialoguer::Confirm;
 
@@ -25,7 +26,11 @@ pub fn is_arch_based() -> bool {
 
 /// Runs a command. On failure, asks whether to keep going and quits if not.
 pub fn run(cmd: &str, args: &[&str]) {
-    let error = match Command::new(cmd).args(args).status() {
+    check(cmd, args, Command::new(cmd).args(args).status());
+}
+
+fn check(cmd: &str, args: &[&str], result: io::Result<ExitStatus>) {
+    let error = match result {
         Ok(status) if status.success() => return,
         Ok(status) => format!("`{cmd} {}` failed ({status})", args.join(" ")),
         Err(e) => format!("Could not run `{cmd}`: {e}"),
@@ -41,6 +46,20 @@ pub fn run(cmd: &str, args: &[&str]) {
     if !keep_going {
         exit(1);
     }
+}
+
+/// Writes a root-owned file (under /etc) by piping `content` into `sudo tee`.
+pub fn write_root(path: &str, content: &str) {
+    let result = Command::new("sudo")
+        .args(["tee", path])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::null())
+        .spawn()
+        .and_then(|mut child| {
+            child.stdin.take().expect("stdin is piped").write_all(content.as_bytes())?;
+            child.wait()
+        });
+    check("sudo", &["tee", path], result);
 }
 
 pub fn sudo(args: &[&str]) {

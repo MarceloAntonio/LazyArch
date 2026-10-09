@@ -1,6 +1,6 @@
 use std::process::Command;
 use dialoguer::MultiSelect;
-use crate::system::{self, pacman_install, sudo};
+use crate::system::{self, is_enabled, pacman_install, sudo};
 use crate::ui;
 
 fn remove_orphans() {
@@ -38,6 +38,13 @@ fn clean_pacman_cache() {
     ui::success("Pacman cache cleaned!");
 }
 
+fn enable_auto_cache_cleanup() {
+    pacman_install(&["pacman-contrib"]);
+    ui::info("Enabling weekly cache cleanup (keeps the last 3 versions)...");
+    sudo(&["systemctl", "enable", "--now", "paccache.timer"]);
+    ui::success("Pacman cache will be cleaned automatically every week!");
+}
+
 fn clean_journal_logs() {
     ui::info("Current journal disk usage:");
     system::run("journalctl", &["--disk-usage"]);
@@ -63,12 +70,13 @@ pub fn run() {
         "Clean Pacman Cache",
         "Clean Systemd Journal Logs",
         "Check Failed Services & Errors",
+        "Clean Pacman Cache Weekly (automatic)",
     ];
 
     let selected = MultiSelect::new()
         .with_prompt("Select maintenance tasks to run")
         .items(&options)
-        .defaults(&[true, true, true, true])
+        .defaults(&[true, true, true, true, !is_enabled("paccache.timer")])
         .interact()
         .unwrap();
 
@@ -83,6 +91,7 @@ pub fn run() {
             1 => clean_pacman_cache(),
             2 => clean_journal_logs(),
             3 => check_failed_services(),
+            4 => enable_auto_cache_cleanup(),
             _ => {}
         }
     }

@@ -10,8 +10,12 @@ fn is_installed(helper: &str) -> bool {
     Path::new("/usr/bin").join(helper).exists()
 }
 
+pub fn installed_helper() -> Option<&'static str> {
+    HELPERS.into_iter().find(|h| is_installed(h))
+}
+
 pub fn done() -> bool {
-    HELPERS.iter().any(|h| is_installed(h))
+    installed_helper().is_some()
 }
 
 pub fn run() {

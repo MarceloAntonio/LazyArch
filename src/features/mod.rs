@@ -1,6 +1,8 @@
+pub mod audio;
 pub mod aur;
 pub mod bluetooth;
 pub mod docker;
+pub mod flatpak;
 pub mod fonts;
 pub mod gaming;
 pub mod git;
@@ -8,5 +10,8 @@ pub mod languages;
 pub mod maintenance;
 pub mod mirrors;
 pub mod pacman_config;
+pub mod printer;
 pub mod shell;
 pub mod ssd;
+pub mod time_sync;
+pub mod update;
