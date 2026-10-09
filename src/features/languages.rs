@@ -1,14 +1,14 @@
 use dialoguer::MultiSelect;
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
-pub fn language_installer() {
+pub fn run() {
     let languages: Vec<(&str, Vec<&str>)> = vec![
         ("Node.js", vec!["nodejs", "npm"]),
         ("Go",      vec!["go"]),
         ("Python",  vec!["python", "python-pip", "python-virtualenv"]),
         ("Java",    vec!["jdk-openjdk", "maven"]),
-        ("Rust",    vec!["rust", "cargo"]),
+        ("Rust",    vec!["rust"]),
         ("PHP",     vec!["php", "php-fpm", "composer"]),
         ("C/C++",   vec!["gcc", "gdb", "cmake", "make", "clang"]),
         ("Ruby",    vec!["ruby"]),
@@ -31,11 +31,8 @@ pub fn language_installer() {
         return;
     }
 
-    for idx in selected {
-        let (name, packages) = &languages[idx];
-        ui::info(&format!("Installing {}...", name));
-        pacman_install(packages);
-    }
+    let packages: Vec<&str> = selected.iter().flat_map(|&idx| languages[idx].1.iter().copied()).collect();
+    pacman_install(&packages);
 
     ui::success("Languages installed!");
 }

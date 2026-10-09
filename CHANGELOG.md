@@ -1,5 +1,26 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- Failed commands are now reported and LazyArch asks whether to continue (they used to be ignored)
+- pacman shows what it will install and asks for confirmation (no more `--noconfirm`)
+- Mirrors: reflector picks the fastest mirrors automatically instead of a fixed country list
+- AUR: choose between yay and paru
+- GPU: drivers are installed for every detected GPU (hybrid laptops), NVIDIA uses `nvidia-open`
+- `/etc/pacman.conf` is backed up to `/etc/pacman.conf.bak` before the first edit
+- Arch/root checks also apply to CLI flags
+
+### Fixed
+- Multilib is enabled before installing lib32 drivers
+- `pacman -Sy` partial upgrades replaced with `pacman -Syu`
+- ILoveCandy no longer duplicated on each run of the pacman configuration
+- Rust install failed because of the nonexistent `cargo` package
+
+### Removed
+- Firewall, Desktop/WM installer, LazyVim and Proton-GE features
+- Docker test environment and PKGBUILD
+
 ## [1.0.0]
 
 ### Added

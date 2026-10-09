@@ -1,8 +1,8 @@
 use dialoguer::MultiSelect;
-use crate::system::pacman::pacman_install;
+use crate::system::pacman_install;
 use crate::ui;
 
-pub fn fonts_installer() {
+pub fn run() {
     let fonts: Vec<(&str, &str)> = vec![
         ("JetBrains Mono", "ttf-jetbrains-mono-nerd"),
         ("Fira Code",      "ttf-firacode-nerd"),
@@ -29,11 +29,8 @@ pub fn fonts_installer() {
         return;
     }
 
-    for idx in selected {
-        let (name, package) = fonts[idx];
-        ui::info(&format!("Installing {}...", name));
-        pacman_install(&[package]);
-    }
+    let packages: Vec<&str> = selected.iter().map(|&idx| fonts[idx].1).collect();
+    pacman_install(&packages);
 
     ui::success("Fonts installed!");
 }

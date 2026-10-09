@@ -1,9 +1,8 @@
-use std::process::Command;
 use dialoguer::{Confirm, Input};
-use crate::system::pacman::pacman_install;
+use crate::system::{self, pacman_install};
 use crate::ui;
 
-pub fn git_setup() {
+pub fn run() {
     ui::info("Git Configuration\n");
 
     pacman_install(&["git"]);
@@ -12,21 +11,13 @@ pub fn git_setup() {
         .with_prompt("Git user name")
         .interact_text()
         .unwrap();
-
-    Command::new("git")
-        .args(["config", "--global", "user.name", &name])
-        .status()
-        .expect("Failed to set git user.name");
+    system::run("git", &["config", "--global", "user.name", &name]);
 
     let email: String = Input::new()
         .with_prompt("Git user email")
         .interact_text()
         .unwrap();
-
-    Command::new("git")
-        .args(["config", "--global", "user.email", &email])
-        .status()
-        .expect("Failed to set git user.email");
+    system::run("git", &["config", "--global", "user.email", &email]);
 
     ui::success("Git configured!");
 
@@ -40,10 +31,8 @@ pub fn git_setup() {
         let home = std::env::var("HOME").expect("HOME not set");
         let key_path = format!("{}/.ssh/id_ed25519", home);
 
-        Command::new("ssh-keygen")
-            .args(["-t", "ed25519", "-C", &email, "-f", &key_path, "-N", ""])
-            .status()
-            .expect("Failed to generate SSH key");
+        // No -N: ssh-keygen asks for a passphrase (Enter for none) and before overwriting a key.
+        system::run("ssh-keygen", &["-t", "ed25519", "-C", &email, "-f", &key_path]);
 
         ui::success("SSH key generated!");
         println!("\n  Add to GitHub/GitLab:");

@@ -1,9 +1,0 @@
-services:
-  rust-dev:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: rust-dev
-    stdin_open: true
-    tty: true
-    command: bash
